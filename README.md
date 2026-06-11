@@ -1,4 +1,4 @@
-# AI News Dashboard
+# AI Brief
 
 ## Problem
 Keeping up with fast-moving AI news requires checking 7+ sources daily — newsletters, lab blogs, and Hacker News — with no unified view or relevance filtering for program management work (Claude, MCP, agents, enterprise AI delivery).
@@ -81,4 +81,4 @@ Articles are scored 1–5 based on keyword matches for:
 
 ## Repo
 
-**https://github.com/hpphari/ai-news**
+**https://github.com/hpphari/ai-brief**
