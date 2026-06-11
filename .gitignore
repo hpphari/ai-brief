@@ -1,0 +1,5 @@
+archive/
+dashboard.html
+__pycache__/
+*.pyc
+.DS_Store
