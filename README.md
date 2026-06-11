@@ -79,10 +79,6 @@ Articles are scored 1–5 based on keyword matches for:
 - **High weight:** Claude, MCP, model context protocol, LangGraph, agents/agentic, enterprise AI
 - **Standard weight:** LLM, GPT, OpenAI, Gemini, tool use, multi-agent, orchestration, deployment, production
 
-## Portfolio Notes
+## Repo
 
-This project demonstrates:
-- Practical AI tooling for program managers
-- Local-first architecture (privacy, zero cost)
-- Graceful degradation (works without Ollama)
-- Daily automation with archiving
+**https://github.com/hpphari/ai-news**
