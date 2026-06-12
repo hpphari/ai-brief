@@ -12,6 +12,11 @@ from collections import defaultdict
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 
+# Self-host RSSHub (https://docs.rsshub.app/deploy/) and set this env var for
+# reliable X/Twitter feeds. Without it, rsshub.app public instance is used
+# but may be rate-limited or require an X session cookie to work.
+_RSSHUB = os.environ.get("RSSHUB_URL", "https://rsshub.app")
+
 # ── Feeds ─────────────────────────────────────────────────────────────────────
 
 FEEDS = {
@@ -38,8 +43,40 @@ FEEDS = {
     # Industry news
     "VentureBeat AI":   {"url": "https://venturebeat.com/feed",                                                    "color": "#c084fc", "type": "article",    "category": "news",       "window_hours": 120, "max_items": 7},
     "TechCrunch AI":    {"url": "https://techcrunch.com/category/artificial-intelligence/feed/",                   "color": "#0d9488", "type": "article",    "category": "news",       "window_hours": 72,  "max_items": 7},
-    "The Verge":        {"url": "https://www.theverge.com/rss/index.xml",                                          "color": "#e11d48", "type": "article",    "category": "news",       "window_hours": 48,  "max_items": 7},
     "Hacker News":      {"url": "https://hnrss.org/newest?q=AI+OR+LLM+OR+Claude+OR+GPT+OR+Gemini+OR+Grok&points=100", "color": "#fb923c", "type": "article", "category": "news",    "window_hours": 48,  "max_items": 7},
+    # YouTube AI creators — free native RSS, no API key needed
+    # To add more channels run: python3 sync_youtube.py
+    "Varun Mayya":          {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCsQoiOrh7jzKmE8NBofhTnQ", "color": "#f97316", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Vaibhav Sisinty":      {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UClXAalunTPaX1YV185DWUeg", "color": "#eab308", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Dan Martell":          {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCA-mWX9CvCTVFWRMb9bKc9w", "color": "#22c55e", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Alberta Tech":         {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCkdgAA0rfK7lG5dv4o__Paw", "color": "#60a5fa", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Doctor AI":            {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCOJp1lsu9vCF-TllwMzcCLg", "color": "#e879f9", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "AI Adventurer":        {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC0VVp_uuSWvrfRPZ6HKiKqw", "color": "#34d399", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Underfitted":          {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCgLxmJ8xER7Y7sywMN5SfWg", "color": "#a78bfa", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "AI Explained":         {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw", "color": "#818cf8", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Matt Wolfe":           {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UChpleBmo18P08aKCIgti38g", "color": "#c084fc", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Fireship":             {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC2Xd-TjJByJyK2w1zNwY0zQ", "color": "#f43f5e", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "Lex Fridman":          {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCJIfeSCssxSC_Dhc5s7woww", "color": "#64748b", "type": "video", "category": "creator", "window_hours": 336, "max_items": 3},
+    "Two Minute Papers":    {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg", "color": "#06b6d4", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    "DeepLearning.AI":      {"url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCcIXc5mJsHVYTZR1maL5l9w", "color": "#0ea5e9", "type": "video", "category": "creator", "window_hours": 336, "max_items": 5},
+    # X / Twitter accounts — via RSSHub (set RSSHUB_URL env var for self-hosted instance)
+    "X: ai_rohitt":      {"url": f"{_RSSHUB}/twitter/user/ai_rohitt",      "color": "#f43f5e", "type": "article", "category": "x", "window_hours": 48, "max_items": 8},
+    "X: vaibhavsisinty": {"url": f"{_RSSHUB}/twitter/user/vaibhavsisinty", "color": "#38bdf8", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: VarunMayya":     {"url": f"{_RSSHUB}/twitter/user/VarunMayya",     "color": "#818cf8", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: danmartell":     {"url": f"{_RSSHUB}/twitter/user/danmartell",     "color": "#34d399", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: AnthropicAI":    {"url": f"{_RSSHUB}/twitter/user/AnthropicAI",    "color": "#f97316", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: OpenAI":         {"url": f"{_RSSHUB}/twitter/user/openai",         "color": "#10b981", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: GoogleDeepMind": {"url": f"{_RSSHUB}/twitter/user/GoogleDeepMind", "color": "#1a73e8", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: LangChain":      {"url": f"{_RSSHUB}/twitter/user/LangChainAI",    "color": "#a78bfa", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: googlegemini":   {"url": f"{_RSSHUB}/twitter/user/googlegemini",   "color": "#4285f4", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: perplexity_ai":  {"url": f"{_RSSHUB}/twitter/user/perplexity_ai",  "color": "#c084fc", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: claudeai":       {"url": f"{_RSSHUB}/twitter/user/claudeai",       "color": "#fb923c", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: karpathy":       {"url": f"{_RSSHUB}/twitter/user/karpathy",       "color": "#fbbf24", "type": "article", "category": "x", "window_hours": 48, "max_items": 8},
+    "X: sama":           {"url": f"{_RSSHUB}/twitter/user/sama",           "color": "#10b981", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: DarioAmodei":    {"url": f"{_RSSHUB}/twitter/user/DarioAmodei",    "color": "#f97316", "type": "article", "category": "x", "window_hours": 48, "max_items": 5},
+    "X: swyx":           {"url": f"{_RSSHUB}/twitter/user/swyx",           "color": "#34d399", "type": "article", "category": "x", "window_hours": 48, "max_items": 8},
+    "X: rowancheung":    {"url": f"{_RSSHUB}/twitter/user/rowancheung",    "color": "#38bdf8", "type": "article", "category": "x", "window_hours": 48, "max_items": 8},
+    "X: emollick":       {"url": f"{_RSSHUB}/twitter/user/emollick",       "color": "#e879f9", "type": "article", "category": "x", "window_hours": 48, "max_items": 8},
 }
 
 MAX_PER_SOURCE = 7  # fallback if max_items not set
@@ -56,6 +93,7 @@ STORY_TYPE_CONFIG = {
     "policy":     {"label": "Policy & Safety",    "emoji": "🏛️", "color": "#fb7185", "bg": "#4c0519"},
     "enterprise": {"label": "Enterprise AI",      "emoji": "🏢", "color": "#818cf8", "bg": "#1e1b4b"},
     "general":    {"label": "Industry News",      "emoji": "📰", "color": "#94a3b8", "bg": "#1e293b"},
+    "video":      {"label": "YouTube Video",      "emoji": "▶️",  "color": "#ef4444", "bg": "#1a0000"},
 }
 
 def classify_story(item):
@@ -337,6 +375,15 @@ def summarize_release(item):
     )
     return ollama_generate(prompt, timeout=150)
 
+def summarize_video(item):
+    prompt = (
+        "Based on this YouTube video title, write 1 sentence explaining what AI topic this video covers "
+        "and why someone who uses AI tools daily should watch it. Plain English only.\n\n"
+        f"Channel: {item['source']}\nTitle: {item['title']}\n\n"
+        "Output only the 1 sentence."
+    )
+    return ollama_generate(prompt)
+
 def top3_summary(items):
     top = sorted(items, key=lambda x: x["score"], reverse=True)[:8]
     lines = "\n".join(f"- {i['title']}" for i in top)
@@ -490,6 +537,8 @@ nav{{position:sticky;top:0;z-index:100;background:rgba(13,15,26,.92);backdrop-fi
     <span class="filter-label">News</span>
     {news_chips}
   </div>
+  {creator_row}
+  {x_row}
 </div>
 
 <div class="page">
@@ -752,8 +801,10 @@ def build_html(items, top3, ollama_ok, date_str):
     all_cards = "\n".join(make_card(i) for i in all_items)
 
     # Filter chips — newsletters excluded (show_chip=False), grouped by category
-    lab_chips  = ""
-    news_chips = ""
+    lab_chips     = ""
+    news_chips    = ""
+    creator_chips = ""
+    x_chips       = ""
     seen = set()
     for i in items:
         src = i["source"]
@@ -764,10 +815,24 @@ def build_html(items, top3, ollama_ok, date_str):
         chip  = (f'<span class="chip on" data-f="{esc(src)}" '
                  f'style="background:{color}22;color:{color};border-color:{color}55">'
                  f'{esc(src)}</span>')
-        if i["category"] == "lab":
-            lab_chips  += chip + "\n  "
+        cat = i["category"]
+        if cat == "lab":
+            lab_chips     += chip + "\n  "
+        elif cat == "creator":
+            creator_chips += chip + "\n  "
+        elif cat == "x":
+            x_chips       += chip + "\n  "
         else:
-            news_chips += chip + "\n  "
+            news_chips    += chip + "\n  "
+
+    creator_row = (
+        f'<div class="filter-row"><span class="filter-label">Creators</span>{creator_chips}</div>'
+        if creator_chips.strip() else ""
+    )
+    x_row = (
+        f'<div class="filter-row"><span class="filter-label">X / Twitter</span>{x_chips}</div>'
+        if x_chips.strip() else ""
+    )
 
     chip_src_count = len(seen)
     return HTML.format(
@@ -783,6 +848,8 @@ def build_html(items, top3, ollama_ok, date_str):
         all_cards=all_cards,
         lab_chips=lab_chips,
         news_chips=news_chips,
+        creator_row=creator_row,
+        x_row=x_row,
     )
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -844,6 +911,8 @@ def main():
                 item["ai_summary"] = summarize_release(item)
             elif item["type"] == "newsletter":
                 item["ai_summary"] = summarize_newsletter(item)
+            elif item["type"] == "video":
+                item["ai_summary"] = summarize_video(item)
             else:
                 item["ai_summary"] = summarize_article(item)
         print("\nWriting morning brief...")
