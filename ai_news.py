@@ -678,291 +678,114 @@ HTML = """<!DOCTYPE html>
 <title>AI Brief — {date}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{{
-  --bg:#08090f;--s1:#0e1018;--s2:#14151f;--s3:#1a1b27;
-  --border:#1f2133;--border2:#262840;
-  --text:#eef0f8;--muted:#5a6080;--dim:#2a2e45;
-  --accent:#10b981;--accent-dim:rgba(16,185,129,.12);--accent-border:rgba(16,185,129,.25);
-  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.10);--amber-border:rgba(245,158,11,.22);
-  --red:#f87171;--blue:#60a5fa;
-  --r:8px;
+  --bg:#0a0a0f;--card:#111118;--border:#1e1e2c;
+  --text:#f0f0f5;--muted:#6b7080;--soft:#9aa0b5;
+  --accent:#10b981;--amber:#f59e0b;
   --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --mono:'JetBrains Mono','Courier New',monospace;
+  --max:680px;
 }}
 *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
-body{{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}}
+body{{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}}
 
-/* ── NAV ── */
-nav{{position:sticky;top:0;z-index:100;background:rgba(8,9,15,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px}}
-.brand{{display:flex;align-items:center;gap:12px}}
-.brand-mark{{width:30px;height:30px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#000;flex-shrink:0;font-family:var(--mono)}}
-.brand-name{{font-size:15px;font-weight:800;letter-spacing:-.02em}}
-.brand-date{{font-size:11px;color:var(--muted);font-family:var(--mono)}}
-.nav-right{{display:flex;align-items:center;gap:20px}}
-.nav-stat{{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}}
-.nav-stat strong{{color:var(--text);font-weight:700}}
-.nav-dot{{width:6px;height:6px;border-radius:50%;flex-shrink:0}}
+/* ── HEADER ── */
+header{{border-bottom:1px solid var(--border);padding:20px 0 16px}}
+.hdr-inner{{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}}
+.hdr-brand{{font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--text)}}
+.hdr-brand span{{color:var(--accent)}}
+.hdr-meta{{font-size:12px;color:var(--muted)}}
 
-/* ── FILTER BAR ── */
-.filter-wrap{{background:var(--s1);border-bottom:1px solid var(--border)}}
-.filter-primary{{padding:0 28px;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}}
-.filter-primary::-webkit-scrollbar{{display:none}}
-.tab{{padding:0 16px;height:42px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;border:none;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;user-select:none;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px;margin-bottom:-1px}}
-.tab.on{{color:var(--text);border-bottom-color:var(--accent)}}
-.tab:hover{{color:var(--text)}}
-.tab-count{{font-size:10.5px;color:var(--muted);background:var(--s2);border:1px solid var(--border);padding:0 6px;border-radius:999px;line-height:1.6}}
-.tab.on .tab-count{{color:var(--accent);border-color:var(--accent-border);background:var(--accent-dim)}}
-.filter-sources{{padding:0 28px;height:34px;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}}
-.filter-sources::-webkit-scrollbar{{display:none}}
-.src-label{{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-right:6px;white-space:nowrap;flex-shrink:0}}
-.src-cat{{font-size:11.5px;font-weight:600;padding:2px 11px;border-radius:4px;cursor:pointer;color:var(--muted);background:transparent;border:1px solid transparent;transition:all .15s;user-select:none;white-space:nowrap;flex-shrink:0}}
-.src-cat.on{{color:var(--text);background:var(--s2);border-color:var(--border)}}
-.src-cat:hover{{color:var(--text)}}
-.src-dot{{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}}
-
-/* ── LAYOUT ── */
-.layout{{max-width:1120px;margin:0 auto;padding:28px 28px 80px;display:grid;grid-template-columns:1fr 264px;gap:28px;align-items:start}}
-.main{{min-width:0}}
-.sidebar{{display:flex;flex-direction:column;gap:14px;position:sticky;top:94px}}
-
-/* ── HERO ── */
-.hero{{grid-column:1/-1;background:var(--s1);border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:var(--r);padding:26px 30px;margin-bottom:4px;position:relative;overflow:hidden}}
-.hero::before{{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 0% 0%,rgba(16,185,129,.05) 0%,transparent 60%);pointer-events:none}}
-.hero-eyebrow{{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px}}
-.hero-eyebrow::before{{content:'';display:block;width:18px;height:2px;background:var(--accent)}}
-.hero-headline{{font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.03em;color:var(--text);margin-bottom:10px}}
-.hero-headline a{{color:inherit;text-decoration:none}}
-.hero-headline a:hover{{color:var(--accent)}}
-.hero-why{{font-size:14px;color:#8892aa;line-height:1.75;margin-bottom:14px}}
-.hero-footer{{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}}
-.hero-impact{{display:inline-flex;align-items:flex-start;gap:6px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:6px;padding:9px 13px;font-size:12.5px;color:var(--accent);line-height:1.5}}
-.hero-impact::before{{content:'→';flex-shrink:0;margin-top:1px}}
+/* ── PAGE ── */
+.page{{max-width:var(--max);margin:0 auto;padding:28px 24px 80px}}
 
 /* ── MORNING BRIEF ── */
-.brief{{grid-column:1/-1;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px 24px;margin-bottom:4px;display:flex;gap:16px;align-items:flex-start}}
-.brief-icon{{font-size:20px;line-height:1;margin-top:2px;flex-shrink:0}}
-.brief-inner{{flex:1}}
-.brief-label{{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}}
-.brief-text{{font-size:13.5px;line-height:1.85;color:#9aa3c0}}
-.brief-text p{{margin-bottom:4px}}
+.brief{{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:18px 20px;margin-bottom:36px}}
+.brief-label{{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:10px}}
+.brief-text{{font-size:14px;line-height:1.8;color:var(--soft)}}
+.brief-text p{{margin-bottom:6px}}
 .brief-text p:last-child{{margin-bottom:0}}
 .brief-offline{{font-size:13px;color:var(--muted);font-style:italic}}
 
-/* ── SIDEBAR WIDGETS ── */
-.widget{{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}}
-.widget-label{{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:14px}}
-.tl-days{{display:flex;gap:4px;align-items:flex-end}}
-.tl-day{{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}}
-.tl-bar-wrap{{height:48px;display:flex;align-items:flex-end;width:100%}}
-.tl-fill{{width:100%;background:var(--s3);border-radius:3px 3px 0 0;min-height:3px}}
-.tl-today .tl-fill{{background:var(--accent)}}
-.tl-name{{font-size:10px;color:var(--muted);font-family:var(--mono)}}
-.tl-today .tl-name{{color:var(--accent);font-weight:700}}
-.tl-cnt{{font-size:9px;color:var(--dim)}}
-.sb-row{{display:flex;align-items:center;gap:8px;margin-bottom:10px}}
-.sb-row:last-child{{margin-bottom:0}}
-.sb-name{{font-size:12px;color:var(--text);width:68px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
-.sb-bar-wrap{{flex:1;background:var(--s3);border-radius:2px;height:4px;overflow:hidden}}
-.sb-bar{{height:100%;background:var(--accent);border-radius:2px;opacity:.7}}
-.sb-cnt{{font-size:11px;color:var(--muted);width:18px;text-align:right;flex-shrink:0}}
+/* ── SECTION ── */
+.section{{margin-bottom:36px}}
+.sec-title{{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}}
+.sec-title::after{{content:'';flex:1;height:1px;background:var(--border)}}
 
-/* ── SECTION HEADERS ── */
-.section-head{{display:flex;align-items:center;gap:10px;margin:24px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--border)}}
-.section-head:first-child{{margin-top:0}}
-.section-label{{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text)}}
-.section-count{{font-size:11px;color:var(--muted);background:var(--s2);border:1px solid var(--border);padding:1px 8px;border-radius:999px;margin-left:auto}}
-
-/* ── RELEASE GRID ── */
-.release-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:12px}}
-.release-card{{background:#0c0900;border:1px solid #2a1c00;border-top:2px solid var(--amber);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:9px;transition:border-color .12s,box-shadow .12s}}
-.release-card:hover{{border-color:#3d2900;box-shadow:0 4px 24px rgba(245,158,11,.1)}}
-.rc-header{{display:flex;align-items:center;gap:6px;flex-wrap:wrap}}
-.rc-headline{{font-size:14px;font-weight:700;line-height:1.35;letter-spacing:-.01em}}
-.rc-headline a{{color:var(--text);text-decoration:none}}
-.rc-headline a:hover{{color:var(--amber)}}
-.rc-orig{{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.4}}
-.rc-what{{font-size:12.5px;color:#fef3c7;font-style:italic;line-height:1.5}}
-.rc-bullets{{display:flex;flex-direction:column;gap:5px}}
-.rc-bullet{{font-size:12.5px;color:#d4d8e8;display:flex;gap:7px;line-height:1.45}}
-.rc-bullet::before{{content:'✓';color:var(--amber);flex-shrink:0;font-weight:700}}
-.rc-who{{font-size:11.5px;color:#6ee7b7;padding-top:8px;border-top:1px solid #2a1c00}}
-.rc-impact{{font-size:12px;color:var(--amber);display:flex;gap:5px;align-items:flex-start}}
-.rc-impact::before{{content:'→';flex-shrink:0}}
-
-/* ── STORY LIST ── */
-.story-list{{display:flex;flex-direction:column}}
-.story{{padding:13px 14px;border-radius:var(--r);border:1px solid transparent;display:flex;flex-direction:column;gap:5px;transition:background .1s,border-color .1s}}
-.story:hover{{background:var(--s2);border-color:var(--border)}}
-.story-meta{{display:flex;align-items:center;gap:6px;flex-wrap:wrap}}
-.src-chip{{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid;white-space:nowrap}}
-.badge-new{{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);letter-spacing:.06em;text-transform:uppercase}}
-.badge-hot{{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.2)}}
-.badge-release-sm{{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);letter-spacing:.06em;text-transform:uppercase}}
-.story-time{{font-size:10.5px;color:var(--dim);font-family:var(--mono);margin-left:auto}}
-.story-headline{{font-size:14.5px;font-weight:700;line-height:1.35;letter-spacing:-.01em;color:var(--text)}}
-.story-headline a{{color:inherit;text-decoration:none}}
+/* ── STORY ROW ── */
+.story{{padding:14px 0;border-bottom:1px solid var(--border)}}
+.story:last-child{{border-bottom:none}}
+.story-source{{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}}
+.story-headline{{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:6px}}
+.story-headline a{{color:var(--text);text-decoration:none}}
 .story-headline a:hover{{color:var(--accent)}}
-.story-orig{{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.4}}
-.story-summary{{font-size:13px;color:#7a83a0;line-height:1.65}}
-.story-impact{{font-size:12.5px;color:var(--accent);display:flex;gap:5px;align-items:flex-start}}
-.story-impact::before{{content:'→';flex-shrink:0}}
-.nl-bullets{{display:flex;flex-direction:column;gap:3px;margin-top:1px}}
-.nl-bullet{{font-size:13px;color:#7a83a0;display:flex;gap:7px;line-height:1.55}}
-.nl-bullet::before{{content:'·';color:var(--accent);flex-shrink:0;font-weight:700;font-size:16px;line-height:1.2}}
+.story-summary{{font-size:13.5px;color:var(--soft);line-height:1.65}}
+.story-impact{{font-size:13px;color:var(--accent);margin-top:5px}}
+.story-impact::before{{content:'→ ';font-weight:700}}
+
+/* ── RELEASE ROW ── */
+.release{{padding:16px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:6px;margin-bottom:10px}}
+.release:last-child{{margin-bottom:0}}
+.rel-source{{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);margin-bottom:5px}}
+.rel-headline{{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:8px}}
+.rel-headline a{{color:var(--text);text-decoration:none}}
+.rel-headline a:hover{{color:var(--amber)}}
+.rel-what{{font-size:13.5px;color:var(--soft);font-style:italic;margin-bottom:8px;line-height:1.6}}
+.rel-bullets{{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}}
+.rel-bullet{{font-size:13.5px;color:var(--soft);padding-left:16px;position:relative;line-height:1.5}}
+.rel-bullet::before{{content:'✓';position:absolute;left:0;color:var(--amber);font-weight:700}}
+.rel-impact{{font-size:13px;color:var(--amber)}}
+.rel-impact::before{{content:'→ ';font-weight:700}}
+
+/* ── NL BULLETS ── */
+.nl-bullets{{display:flex;flex-direction:column;gap:4px}}
+.nl-bullet{{font-size:13.5px;color:var(--soft);padding-left:14px;position:relative;line-height:1.6}}
+.nl-bullet::before{{content:'·';position:absolute;left:0;color:var(--accent);font-weight:700;font-size:18px;line-height:1.1}}
 
 /* ── JARGON ── */
 .jargon{{border-bottom:1px dotted var(--accent);cursor:help;position:relative}}
-.jargon[title]:hover::after{{content:attr(title);position:absolute;bottom:100%;left:0;background:var(--s2);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;font-size:11.5px;color:var(--text);white-space:normal;max-width:220px;z-index:200;margin-bottom:5px;line-height:1.5;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.6)}}
+.jargon[title]:hover::after{{content:attr(title);position:absolute;bottom:calc(100% + 4px);left:0;background:#1a1a2e;border:1px solid var(--border);border-radius:6px;padding:7px 11px;font-size:12px;color:var(--text);white-space:normal;max-width:220px;z-index:200;line-height:1.5;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.6)}}
 
-/* ── STATES ── */
-.ollama-warn{{background:#0e0700;border:1px solid #3a1a00;border-radius:var(--r);padding:11px 15px;font-size:13px;color:#fcd34d;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}}
-.empty{{color:var(--muted);font-size:13px;padding:24px;text-align:center;background:var(--s1);border:1px dashed var(--border);border-radius:var(--r)}}
+/* ── FOOTER ── */
+.foot{{border-top:1px solid var(--border);padding:20px 24px;max-width:var(--max);margin:0 auto;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}}
 
-/* ── RESPONSIVE ── */
-@media(max-width:860px){{.layout{{grid-template-columns:1fr;padding:20px 20px 60px}}.sidebar{{display:none}}.release-grid{{grid-template-columns:1fr}}}}
-@media(max-width:580px){{nav,.filter-bar{{padding:0 16px}}.layout{{padding:16px 16px 60px}}.hero{{padding:20px 18px}}.hero-headline{{font-size:18px}}.brief{{padding:14px 16px}}}}
+@media(max-width:600px){{.page{{padding:20px 16px 60px}}.hdr-inner{{padding:0 16px}}}}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="brand">
-    <div class="brand-mark">AI</div>
-    <div>
-      <div class="brand-name">AI Brief</div>
-      <div class="brand-date">{date}</div>
-    </div>
+<header>
+  <div class="hdr-inner">
+    <div class="hdr-brand">AI<span>Brief</span></div>
+    <div class="hdr-meta">{date} &nbsp;·&nbsp; {count} stories</div>
   </div>
-  <div class="nav-right">
-    <div class="nav-stat"><span class="nav-dot" style="background:var(--amber)"></span><strong>{releases}</strong>&nbsp;releases</div>
-    <div class="nav-stat"><span class="nav-dot" style="background:var(--red)"></span><strong>{trending_count}</strong>&nbsp;trending</div>
-    <div class="nav-stat"><span class="nav-dot" style="background:var(--accent)"></span><strong>{count}</strong>&nbsp;stories</div>
-  </div>
-</nav>
+</header>
 
-<div class="filter-wrap">
-  <div class="filter-primary">
-    <span class="tab on"  data-f="all"><span class="tab-count">{count}</span> All</span>
-    <span class="tab off" data-f="__rel__">🚀 Releases</span>
-    <span class="tab off" data-f="__trend__">🔥 Trending</span>
-    {new_today_tab}
-  </div>
-  <div class="filter-sources">
-    <span class="src-label">Sources</span>
-    <span class="src-cat off" data-f="__cat_lab__"><span class="src-dot" style="background:#4ade80"></span>Labs</span>
-    <span class="src-cat off" data-f="__cat_news__"><span class="src-dot" style="background:#60a5fa"></span>News</span>
-    <span class="src-cat off" data-f="__cat_creator__"><span class="src-dot" style="background:#c084fc"></span>Creators</span>
-    <span class="src-cat off" data-f="__cat_x__"><span class="src-dot" style="background:#94a3b8"></span>X · Twitter</span>
-  </div>
-</div>
-
-<div class="layout">
-
-{hero_block}
-{brief_block}
-
-<div class="main">
-  {warn_block}
+<div class="page">
+  {brief_block}
   {releases_block}
-  {trending_block}
-  {all_block}
+  {news_block}
+  {creators_block}
+  {x_block}
 </div>
 
-<div class="sidebar">
-  {timeline_widget}
-  {scoreboard_widget}
+<div class="foot">
+  <span>AI Brief — your daily AI digest</span>
+  <span>{releases} releases · {trending_count} trending</span>
 </div>
 
-</div>
-
-<script>
-(function(){{
-  const tabs     = document.querySelectorAll('.tab[data-f]');
-  const srcCats  = document.querySelectorAll('.src-cat[data-f]');
-  const allItems = Array.from(document.querySelectorAll('[data-src]'));
-  const secRel   = document.getElementById('sec-releases');
-  const secTrend = document.getElementById('sec-trending');
-  const secAll   = document.getElementById('sec-all');
-
-  function show(el){{if(el)el.style.display='';}}
-  function hide(el){{if(el)el.style.display='none';}}
-  function hasVisible(sec){{return sec&&[...sec.querySelectorAll('[data-src]')].some(c=>c.style.display!=='none');}}
-
-  function clearSrcCats(){{srcCats.forEach(c=>{{c.classList.remove('on');c.classList.add('off');}});}}
-
-  function applyFilter(f){{
-    tabs.forEach(c=>{{c.classList.toggle('on',c.dataset.f===f);c.classList.toggle('off',c.dataset.f!==f);}});
-    clearSrcCats();
-    if(f==='all'){{
-      show(secRel);show(secTrend);show(secAll);allItems.forEach(c=>c.style.display='');
-    }}else if(f==='__rel__'){{
-      show(secRel);hide(secTrend);hide(secAll);allItems.forEach(c=>c.style.display='');
-    }}else if(f==='__trend__'){{
-      hide(secRel);show(secTrend);hide(secAll);
-      allItems.forEach(c=>{{c.style.display=c.dataset.trend==='1'?'':'none';}});
-      if(!hasVisible(secTrend))hide(secTrend);
-    }}else if(f==='__new_today__'){{
-      show(secRel);show(secTrend);show(secAll);
-      allItems.forEach(c=>{{c.style.display=c.dataset.newtoday==='1'?'':'none';}});
-      if(!hasVisible(secRel))hide(secRel);if(!hasVisible(secTrend))hide(secTrend);
-    }}
-  }}
-
-  function applySrcFilter(el, f){{
-    const isOn = el.classList.contains('on');
-    clearSrcCats();
-    tabs.forEach(c=>{{c.classList.toggle('on',c.dataset.f==='all');c.classList.toggle('off',c.dataset.f!=='all');}});
-    if(isOn){{
-      allItems.forEach(c=>c.style.display='');
-      show(secRel);show(secTrend);show(secAll);
-      return;
-    }}
-    el.classList.add('on');el.classList.remove('off');
-    const cat=f.replace('__cat_','').replace('__','');
-    allItems.forEach(c=>{{c.style.display=c.dataset.cat===cat?'':'none';}});
-    show(secRel);show(secTrend);show(secAll);
-    if(!hasVisible(secRel))hide(secRel);
-    if(!hasVisible(secTrend))hide(secTrend);
-    const list=document.querySelector('#sec-all .story-list');
-    if(list){{const vis=[...list.querySelectorAll('[data-src]')].filter(c=>c.style.display!=='none');vis.sort((a,b)=>parseInt(b.dataset.ts||0)-parseInt(a.dataset.ts||0));vis.forEach(c=>list.appendChild(c));}}
-  }}
-
-  tabs.forEach(c=>c.addEventListener('click',()=>applyFilter(c.dataset.f)));
-  srcCats.forEach(c=>c.addEventListener('click',()=>applySrcFilter(c,c.dataset.f)));
-}})();
-</script>
 </body>
 </html>"""
 
 
 # ── Render helpers ─────────────────────────────────────────────────────────────
 
-def _src_chip(item):
-    c = item["color"]
-    return (f'<span class="src-chip" style="color:{c};background:{c}18;border-color:{c}44">'
-            f'{esc(item["source"])}</span>')
-
-def make_card(item, extra_class=""):
-    """Render a story as a clean list row."""
-    is_r   = item.get("is_release", False)
-    is_t   = item.get("trending", False)
-    is_new = item.get("is_new_today", False)
-    area   = item.get("life_area") or ""
+def make_card(item):
+    """Render a story as a simple digest row: source · headline · 1-line summary."""
     plain_h = item.get("plain_headline", "").strip()
     impact  = item.get("impact", "").strip()
-    ts      = int(item["date_raw"].timestamp()) if item.get("date_raw") else 0
-
     title_text = plain_h if (plain_h and plain_h.lower() != item["title"].lower()) else item["title"]
-    orig_html  = (f'<div class="story-orig">{esc(item["title"])}</div>'
-                  if (plain_h and plain_h.lower() != item["title"].lower()) else "")
-
-    badges = _src_chip(item)
-    if is_new: badges += '<span class="badge-new">NEW</span>'
-    if is_t:   badges += '<span class="badge-hot">🔥 HOT</span>'
-    if is_r:   badges += '<span class="badge-release-sm">🚀 RELEASE</span>'
-    time_html = f'<span class="story-time">{esc(item["date"])}</span>'
 
     s = item.get("ai_summary", "")
     summary_html = ""
@@ -974,101 +797,65 @@ def make_card(item, extra_class=""):
             bullets = "".join(f'<div class="nl-bullet">{jargon_wrap(esc(l))}</div>' for l in lines[:3])
             summary_html = f'<div class="nl-bullets">{bullets}</div>'
         else:
-            summary_html = f'<div class="story-summary">{jargon_wrap(esc(s))}</div>'
+            first_line = s.split("\n")[0].strip()
+            summary_html = f'<div class="story-summary">{jargon_wrap(esc(first_line))}</div>'
 
-    impact_html = f'<div class="story-impact">{jargon_wrap(esc(impact))}</div>' if impact else ""
+    impact_html = f'<div class="story-impact">{jargon_wrap(esc(impact))}</div>' if impact and not s else ""
 
     return (
-        f'<article class="story" data-src="{esc(item["source"])}" data-cat="{esc(item["category"])}" '
-        f'data-rel="{"1" if is_r else "0"}" data-trend="{"1" if is_t else "0"}" '
-        f'data-area="{esc(area)}" data-newtoday="{"1" if is_new else "0"}" data-ts="{ts}">\n'
-        f'  <div class="story-meta">{badges}{time_html}</div>\n'
-        f'  <div class="story-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>\n'
-        f'  {orig_html}\n'
-        f'  {summary_html}\n'
-        f'  {impact_html}\n'
-        f'</article>'
+        f'<div class="story">'
+        f'<div class="story-source">{esc(item["source"])}</div>'
+        f'<div class="story-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>'
+        f'{summary_html}{impact_html}'
+        f'</div>'
     )
 
 def make_release_card(item):
-    """Render a release as an amber-accented card."""
-    is_t   = item.get("trending", False)
-    is_new = item.get("is_new_today", False)
-    area   = item.get("life_area") or ""
+    """Render a release as an amber-accented row."""
     plain_h = item.get("plain_headline", "").strip()
     impact  = item.get("impact", "").strip()
-    ts      = int(item["date_raw"].timestamp()) if item.get("date_raw") else 0
-
     title_text = plain_h if (plain_h and plain_h.lower() != item["title"].lower()) else item["title"]
-    orig_html  = (f'<div class="rc-orig">{esc(item["title"])}</div>'
-                  if (plain_h and plain_h.lower() != item["title"].lower()) else "")
-
-    badges = '<span class="badge-release-sm">🚀 RELEASE</span>' + _src_chip(item)
-    if is_new: badges += '<span class="badge-new">NEW</span>'
-    if is_t:   badges += '<span class="badge-hot">🔥 HOT</span>'
 
     s = item.get("ai_summary", "")
-    what = who = imp_line = ""
+    what = imp_line = ""
     bullets = []
     if s:
         for line in s.split("\n"):
             l = line.strip(); u = l.upper()
-            if u.startswith("WHAT:"):    what    = l[5:].strip()
-            elif u.startswith("WHO:"):   who     = l[4:].strip()
+            if u.startswith("WHAT:"):     what     = l[5:].strip()
             elif u.startswith("IMPACT:"): imp_line = l[7:].strip()
             elif l.startswith(("•", "-")): bullets.append(l.lstrip("•-").strip())
         if not imp_line: imp_line = impact
     else:
         imp_line = impact
 
-    what_h    = f'<div class="rc-what">{jargon_wrap(esc(what))}</div>' if what else ""
-    bul_h     = ('<div class="rc-bullets">' +
-                 "".join(f'<div class="rc-bullet">{jargon_wrap(esc(b))}</div>' for b in bullets[:3]) +
-                 "</div>") if bullets else ""
-    who_h     = f'<div class="rc-who">Best for: {esc(who)}</div>' if who else ""
-    impact_h  = f'<div class="rc-impact">{jargon_wrap(esc(imp_line))}</div>' if imp_line else ""
-    no_sum_h  = '<div class="story-summary" style="font-style:italic;color:var(--muted)">Summary unavailable — run Ollama for summaries</div>' if not s else ""
+    what_h   = f'<div class="rel-what">{jargon_wrap(esc(what))}</div>' if what else ""
+    bul_h    = ('<div class="rel-bullets">' +
+                "".join(f'<div class="rel-bullet">{jargon_wrap(esc(b))}</div>' for b in bullets[:3]) +
+                "</div>") if bullets else ""
+    impact_h = f'<div class="rel-impact">{jargon_wrap(esc(imp_line))}</div>' if imp_line else ""
 
     return (
-        f'<div class="release-card" data-src="{esc(item["source"])}" data-cat="{esc(item["category"])}" '
-        f'data-rel="1" data-trend="{"1" if is_t else "0"}" '
-        f'data-area="{esc(area)}" data-newtoday="{"1" if is_new else "0"}" data-ts="{ts}">\n'
-        f'  <div class="rc-header">{badges}'
-        f'<span class="story-time">{esc(item["date"])}</span></div>\n'
-        f'  <div class="rc-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>\n'
-        f'  {orig_html}{what_h}{bul_h}{who_h}{impact_h}{no_sum_h}\n'
+        f'<div class="release">'
+        f'<div class="rel-source">{esc(item["source"])}</div>'
+        f'<div class="rel-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>'
+        f'{what_h}{bul_h}{impact_h}'
         f'</div>'
     )
 
 
 # ── Build HTML ─────────────────────────────────────────────────────────────────
 
-def build_html(items, top3, ollama_ok, date_str, archive_dir):
-    releases  = [i for i in items if i.get("is_release")]
-    trending  = [i for i in items if i.get("trending") and not i.get("is_release")]
-    all_items = sorted(items, key=lambda x: x["score"], reverse=True)
+def _section(emoji_title, rows_html):
+    return (
+        f'<div class="section">'
+        f'<div class="sec-title">{emoji_title}</div>'
+        f'{rows_html}'
+        f'</div>'
+    )
 
-    # Hero
-    hero_block = ""
-    top_item = all_items[0] if all_items else None
-    if top_item:
-        h_title  = top_item.get("hero_title") or top_item.get("plain_headline") or top_item["title"]
-        h_why    = top_item.get("hero_why", "")
-        h_action = top_item.get("hero_action", "") or top_item.get("impact", "")
-        color    = top_item["color"]
-        why_html    = f'<div class="hero-why">{esc(h_why)}</div>' if h_why else ""
-        impact_html = f'<div class="hero-impact">{jargon_wrap(esc(h_action))}</div>' if h_action else ""
-        hero_block = (
-            f'<div class="hero">\n'
-            f'  <div class="hero-eyebrow">Story of the Day</div>\n'
-            f'  <div class="hero-headline"><a href="{top_item["link"]}" target="_blank" rel="noopener">{esc(h_title)}</a></div>\n'
-            f'  {why_html}\n'
-            f'  <div class="hero-footer">'
-            f'<span class="src-chip" style="color:{color};background:{color}18;border-color:{color}44">{esc(top_item["source"])}</span>'
-            f'<span class="story-time">{esc(top_item["date"])}</span></div>\n'
-            f'  {impact_html}\n'
-            f'</div>'
-        )
+def build_html(items, top3, ollama_ok, date_str, archive_dir):
+    by_score = sorted(items, key=lambda x: x["score"], reverse=True)
 
     # Morning brief
     if top3:
@@ -1076,98 +863,60 @@ def build_html(items, top3, ollama_ok, date_str, archive_dir):
         paras = "".join(f"<p>{esc(l)}</p>" for l in lines)
         brief_block = (
             f'<div class="brief">'
-            f'<div class="brief-icon">📰</div>'
-            f'<div class="brief-inner"><div class="brief-label">Morning Brief</div>'
-            f'<div class="brief-text">{paras}</div></div></div>'
+            f'<div class="brief-label">Morning Brief</div>'
+            f'<div class="brief-text">{paras}</div>'
+            f'</div>'
         )
     else:
         brief_block = (
             '<div class="brief">'
-            '<div class="brief-icon">📰</div>'
-            '<div class="brief-inner"><div class="brief-label">Morning Brief</div>'
+            '<div class="brief-label">Morning Brief</div>'
             '<div class="brief-offline">Start Ollama to generate your daily briefing.</div>'
-            '</div></div>'
+            '</div>'
         )
 
-    # Warn
-    warn_block = ""
-    if not ollama_ok:
-        warn_block = (
-            '<div class="ollama-warn"><span>⚠️</span><span>Ollama offline — '
-            'run <code>ollama serve</code> and re-run for AI summaries.</span></div>'
-        )
-
-    # Releases
+    # 🚀 What Launched — releases only, up to 6
+    release_items = [i for i in by_score if i.get("is_release")][:6]
     releases_block = ""
-    if releases:
-        epoch      = datetime.min.replace(tzinfo=timezone.utc)
-        sorted_rel = sorted(releases, key=lambda x: x.get("date_raw") or epoch, reverse=True)
-        cards_html = "\n".join(make_release_card(i) for i in sorted_rel)
-        releases_block = (
-            f'<div id="sec-releases">'
-            f'<div class="section-head">'
-            f'<span class="section-label">🚀 What\'s New</span>'
-            f'<span class="section-count">{len(releases)} release{"s" if len(releases)!=1 else ""}</span>'
-            f'</div>'
-            f'<div class="release-grid">{cards_html}</div>'
-            f'</div>'
-        )
+    if release_items:
+        rows = "".join(make_release_card(i) for i in release_items)
+        releases_block = _section("🚀 What Launched", rows)
 
-    # Trending
-    trending_block = ""
-    if trending:
-        sorted_t  = sorted(trending, key=lambda x: x["score"], reverse=True)
-        stories   = "\n".join(make_card(i) for i in sorted_t)
-        src_count = len(set(i["source"] for i in trending))
-        trending_block = (
-            f'<div id="sec-trending">'
-            f'<div class="section-head">'
-            f'<span class="section-label">🔥 Trending</span>'
-            f'<span class="section-count">{src_count}+ sources</span>'
-            f'</div>'
-            f'<div class="story-list">{stories}</div>'
-            f'</div>'
-        )
+    # 📰 Top Stories — lab + news + newsletter, up to 8
+    news_cats = {"lab", "news", "newsletter"}
+    news_items = [i for i in by_score if i.get("category") in news_cats and not i.get("is_release")][:8]
+    news_block = ""
+    if news_items:
+        rows = "".join(make_card(i) for i in news_items)
+        news_block = _section("📰 Top Stories", rows)
 
-    # All stories
-    stories  = "\n".join(make_card(i) for i in all_items)
-    all_block = (
-        f'<div id="sec-all">'
-        f'<div class="section-head">'
-        f'<span class="section-label">All Stories</span>'
-        f'<span class="section-count">{len(items)}</span>'
-        f'</div>'
-        f'<div class="story-list">{stories}</div>'
-        f'</div>'
-    )
+    # 📺 Creator Picks — YouTube creators, up to 6
+    creator_items = [i for i in by_score if i.get("category") == "creator"][:6]
+    creators_block = ""
+    if creator_items:
+        rows = "".join(make_card(i) for i in creator_items)
+        creators_block = _section("📺 Creator Picks", rows)
 
-    # Sidebar
-    timeline_widget   = build_timeline_html(archive_dir)
-    scoreboard_widget = build_scoreboard_html(items)
+    # 🐦 From X — X/Twitter, up to 6
+    x_items = [i for i in by_score if i.get("category") == "x"][:6]
+    x_block = ""
+    if x_items:
+        rows = "".join(make_card(i) for i in x_items)
+        x_block = _section("🐦 From X", rows)
 
-    # New today tab
-    new_today_count = sum(1 for i in items if i.get("is_new_today"))
-    new_today_tab   = ""
-    if new_today_count:
-        new_today_tab = (
-            f'<span class="tab off" data-f="__new_today__">'
-            f'✨ New Today <span class="tab-count">{new_today_count}</span></span>'
-        )
+    releases_count = sum(1 for i in items if i.get("is_release"))
+    trending_count = sum(1 for i in items if i.get("trending"))
 
     return HTML.format(
         date=date_str,
         count=len(items),
-        releases=len(releases),
-        trending_count=len(trending),
-        hero_block=hero_block,
+        releases=releases_count,
+        trending_count=trending_count,
         brief_block=brief_block,
-        warn_block=warn_block,
         releases_block=releases_block,
-        trending_block=trending_block,
-        all_block=all_block,
-        timeline_widget=timeline_widget,
-        scoreboard_widget=scoreboard_widget,
-        new_today_tab=new_today_tab,
+        news_block=news_block,
+        creators_block=creators_block,
+        x_block=x_block,
     )
 
 
