@@ -485,19 +485,18 @@ def build_timeline_html(archive_dir):
 
     days_html = ""
     for day in days:
-        bar_h    = max(4, round(day["count"] / max_cnt * 52)) if day["count"] else 4
-        today_c  = " tl-today" if day["today"] else ""
-        cnt_str  = str(day["count"]) if day["count"] > 0 else "–"
+        bar_h   = max(3, round(day["count"] / max_cnt * 48)) if day["count"] else 3
+        cls     = "tl-day tl-today" if day["today"] else "tl-day"
         days_html += (
-            f'<div class="tl-day{today_c}">'
-            f'<span class="tl-name">{day["name"]}</span>'
+            f'<div class="{cls}">'
             f'<div class="tl-bar-wrap"><div class="tl-fill" style="height:{bar_h}px"></div></div>'
-            f'<span class="tl-cnt">{cnt_str}</span>'
+            f'<span class="tl-name">{day["name"]}</span>'
+            f'<span class="tl-cnt">{day["count"] or ""}</span>'
             f'</div>'
         )
     return (
-        f'<div class="timeline-strip">'
-        f'<span class="tl-label">7-Day Activity</span>'
+        f'<div class="widget">'
+        f'<div class="widget-label">7-Day Activity</div>'
         f'<div class="tl-days">{days_html}</div>'
         f'</div>'
     )
@@ -509,9 +508,9 @@ def build_scoreboard_html(items):
             counts[item["about"]] += 1
     if not counts:
         return ""
-    ranked  = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:6]
-    max_c   = ranked[0][1] or 1
-    rows    = ""
+    ranked = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:6]
+    max_c  = ranked[0][1] or 1
+    rows   = ""
     for company, count in ranked:
         pct  = round(count / max_c * 100)
         rows += (
@@ -522,8 +521,8 @@ def build_scoreboard_html(items):
             f'</div>'
         )
     return (
-        f'<div class="scoreboard">'
-        f'<div class="sb-label">Company Activity</div>'
+        f'<div class="widget">'
+        f'<div class="widget-label">Company Activity</div>'
         f'{rows}'
         f'</div>'
     )
@@ -676,352 +675,262 @@ HTML = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Today — {date}</title>
+<title>AI Brief — {date}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{{
-  --bg:#0d0f1a;--s1:#13152a;--s2:#1a1d35;--s3:#212540;
-  --border:#2a2d4a;--text:#e8eaf6;--muted:#7986cb;
-  --r:12px;
-  --amber:#f59e0b;--amber-bg:#1c1202;
-  --blue:#60a5fa;--green:#34d399;--red:#f87171;
-  --purple:#c084fc;--cyan:#67e8f9;
+  --bg:#08090f;--s1:#0e1018;--s2:#14151f;--s3:#1a1b27;
+  --border:#1f2133;--border2:#262840;
+  --text:#eef0f8;--muted:#5a6080;--dim:#2a2e45;
+  --accent:#10b981;--accent-dim:rgba(16,185,129,.12);--accent-border:rgba(16,185,129,.25);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.10);--amber-border:rgba(245,158,11,.22);
+  --red:#f87171;--blue:#60a5fa;
+  --r:8px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Courier New',monospace;
 }}
-*{{box-sizing:border-box;margin:0;padding:0}}
-body{{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif;font-size:15px;line-height:1.6;min-height:100vh}}
+*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}}
 
-/* ── Sticky nav ── */
-nav{{position:sticky;top:0;z-index:100;background:rgba(13,15,26,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}}
-.nav-brand{{display:flex;align-items:center;gap:10px}}
-.nav-brand h1{{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-.nav-meta{{font-size:.75rem;color:var(--muted)}}
-.stat-pills{{display:flex;gap:6px;flex-wrap:wrap}}
-.stat-pill{{padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;border:1px solid var(--border)}}
+/* ── NAV ── */
+nav{{position:sticky;top:0;z-index:100;background:rgba(8,9,15,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px}}
+.brand{{display:flex;align-items:center;gap:12px}}
+.brand-mark{{width:30px;height:30px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#000;flex-shrink:0;font-family:var(--mono)}}
+.brand-name{{font-size:15px;font-weight:800;letter-spacing:-.02em}}
+.brand-date{{font-size:11px;color:var(--muted);font-family:var(--mono)}}
+.nav-right{{display:flex;align-items:center;gap:20px}}
+.nav-stat{{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}}
+.nav-stat strong{{color:var(--text);font-weight:700}}
+.nav-dot{{width:6px;height:6px;border-radius:50%;flex-shrink:0}}
 
-/* ── Timeline strip ── */
-.timeline-strip{{background:var(--s1);border-bottom:1px solid var(--border);padding:8px 24px;display:flex;align-items:center;gap:16px;overflow-x:auto}}
-.tl-label{{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap;flex-shrink:0}}
-.tl-days{{display:flex;gap:10px;align-items:flex-end}}
-.tl-day{{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:32px}}
-.tl-name{{font-size:.62rem;color:var(--muted)}}
-.tl-bar-wrap{{height:56px;display:flex;align-items:flex-end}}
-.tl-fill{{width:20px;background:var(--border);border-radius:3px 3px 0 0;transition:height .3s;min-height:4px}}
-.tl-today .tl-fill{{background:linear-gradient(180deg,#818cf8,#c084fc)}}
-.tl-today .tl-name{{color:#818cf8;font-weight:700}}
-.tl-cnt{{font-size:.6rem;color:var(--muted)}}
-.tl-today .tl-cnt{{color:#818cf8}}
+/* ── FILTER BAR ── */
+.filter-wrap{{background:var(--s1);border-bottom:1px solid var(--border)}}
+.filter-primary{{padding:0 28px;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}}
+.filter-primary::-webkit-scrollbar{{display:none}}
+.tab{{padding:0 16px;height:42px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;border:none;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;user-select:none;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px;margin-bottom:-1px}}
+.tab.on{{color:var(--text);border-bottom-color:var(--accent)}}
+.tab:hover{{color:var(--text)}}
+.tab-count{{font-size:10.5px;color:var(--muted);background:var(--s2);border:1px solid var(--border);padding:0 6px;border-radius:999px;line-height:1.6}}
+.tab.on .tab-count{{color:var(--accent);border-color:var(--accent-border);background:var(--accent-dim)}}
+.filter-sources{{padding:0 28px;height:34px;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}}
+.filter-sources::-webkit-scrollbar{{display:none}}
+.src-label{{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-right:6px;white-space:nowrap;flex-shrink:0}}
+.src-cat{{font-size:11.5px;font-weight:600;padding:2px 11px;border-radius:4px;cursor:pointer;color:var(--muted);background:transparent;border:1px solid transparent;transition:all .15s;user-select:none;white-space:nowrap;flex-shrink:0}}
+.src-cat.on{{color:var(--text);background:var(--s2);border-color:var(--border)}}
+.src-cat:hover{{color:var(--text)}}
+.src-dot{{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}}
 
-/* ── Filter bar ── */
-.filter-bar{{padding:8px 24px;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--border);background:var(--s1)}}
-.filter-row{{display:flex;flex-wrap:wrap;gap:5px;align-items:center}}
-.filter-label{{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);width:72px;flex-shrink:0}}
-.chip{{padding:3px 11px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none;white-space:nowrap}}
-.chip.on{{opacity:1}}
-.chip.off{{opacity:.28}}
+/* ── LAYOUT ── */
+.layout{{max-width:1120px;margin:0 auto;padding:28px 28px 80px;display:grid;grid-template-columns:1fr 264px;gap:28px;align-items:start}}
+.main{{min-width:0}}
+.sidebar{{display:flex;flex-direction:column;gap:14px;position:sticky;top:94px}}
 
-/* ── Page body ── */
-.page{{max-width:1320px;margin:0 auto;padding:24px 24px 60px}}
+/* ── HERO ── */
+.hero{{grid-column:1/-1;background:var(--s1);border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:var(--r);padding:26px 30px;margin-bottom:4px;position:relative;overflow:hidden}}
+.hero::before{{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 0% 0%,rgba(16,185,129,.05) 0%,transparent 60%);pointer-events:none}}
+.hero-eyebrow{{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px}}
+.hero-eyebrow::before{{content:'';display:block;width:18px;height:2px;background:var(--accent)}}
+.hero-headline{{font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.03em;color:var(--text);margin-bottom:10px}}
+.hero-headline a{{color:inherit;text-decoration:none}}
+.hero-headline a:hover{{color:var(--accent)}}
+.hero-why{{font-size:14px;color:#8892aa;line-height:1.75;margin-bottom:14px}}
+.hero-footer{{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}}
+.hero-impact{{display:inline-flex;align-items:flex-start;gap:6px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:6px;padding:9px 13px;font-size:12.5px;color:var(--accent);line-height:1.5}}
+.hero-impact::before{{content:'→';flex-shrink:0;margin-top:1px}}
 
-/* ── Hero / Story of the Day ── */
-.hero{{background:linear-gradient(135deg,#13152a,#1a1435);border:1px solid #4c1d95;border-radius:var(--r);padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden}}
-.hero::before{{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,#7c3aed22,transparent 70%);pointer-events:none}}
-.hero-eyebrow{{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa;margin-bottom:10px;display:flex;align-items:center;gap:8px}}
-.hero-title{{font-size:1.45rem;font-weight:800;line-height:1.3;margin-bottom:10px}}
-.hero-title a{{color:var(--text);text-decoration:none}}
-.hero-title a:hover{{color:#c084fc}}
-.hero-sub{{font-size:.95rem;color:#c7d2fe;line-height:1.7;margin-bottom:12px}}
-.hero-meta{{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}}
-.hero-impact{{background:#1a0f2e;border-left:3px solid #7c3aed;border-radius:0 8px 8px 0;padding:10px 14px;font-size:.88rem;color:#e9d5ff;line-height:1.6}}
+/* ── MORNING BRIEF ── */
+.brief{{grid-column:1/-1;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px 24px;margin-bottom:4px;display:flex;gap:16px;align-items:flex-start}}
+.brief-icon{{font-size:20px;line-height:1;margin-top:2px;flex-shrink:0}}
+.brief-inner{{flex:1}}
+.brief-label{{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}}
+.brief-text{{font-size:13.5px;line-height:1.85;color:#9aa3c0}}
+.brief-text p{{margin-bottom:4px}}
+.brief-text p:last-child{{margin-bottom:0}}
+.brief-offline{{font-size:13px;color:var(--muted);font-style:italic}}
 
-/* ── Brief + Scoreboard ── */
-.brief-outer{{display:grid;grid-template-columns:1fr 240px;gap:16px;margin-bottom:24px;align-items:start}}
-.brief{{background:linear-gradient(135deg,#1a1b2e,#1e1b3a);border:1px solid #3730a3;border-radius:var(--r);padding:22px 26px;border-left:4px solid #818cf8}}
-.brief-label{{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#818cf8;margin-bottom:10px}}
-.brief-text{{font-size:.95rem;line-height:1.85;color:#c7d2fe}}
-.brief-text p{{margin-bottom:.5em}}
+/* ── SIDEBAR WIDGETS ── */
+.widget{{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}}
+.widget-label{{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:14px}}
+.tl-days{{display:flex;gap:4px;align-items:flex-end}}
+.tl-day{{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}}
+.tl-bar-wrap{{height:48px;display:flex;align-items:flex-end;width:100%}}
+.tl-fill{{width:100%;background:var(--s3);border-radius:3px 3px 0 0;min-height:3px}}
+.tl-today .tl-fill{{background:var(--accent)}}
+.tl-name{{font-size:10px;color:var(--muted);font-family:var(--mono)}}
+.tl-today .tl-name{{color:var(--accent);font-weight:700}}
+.tl-cnt{{font-size:9px;color:var(--dim)}}
+.sb-row{{display:flex;align-items:center;gap:8px;margin-bottom:10px}}
+.sb-row:last-child{{margin-bottom:0}}
+.sb-name{{font-size:12px;color:var(--text);width:68px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+.sb-bar-wrap{{flex:1;background:var(--s3);border-radius:2px;height:4px;overflow:hidden}}
+.sb-bar{{height:100%;background:var(--accent);border-radius:2px;opacity:.7}}
+.sb-cnt{{font-size:11px;color:var(--muted);width:18px;text-align:right;flex-shrink:0}}
 
-/* ── Company Scoreboard ── */
-.scoreboard{{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}}
-.sb-label{{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}}
-.sb-row{{display:flex;align-items:center;gap:8px;margin-bottom:8px}}
-.sb-name{{font-size:.75rem;color:var(--text);width:74px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
-.sb-bar-wrap{{flex:1;background:var(--s2);border-radius:3px;height:6px;overflow:hidden}}
-.sb-bar{{height:100%;background:linear-gradient(90deg,#818cf8,#c084fc);border-radius:3px;transition:width .4s}}
-.sb-cnt{{font-size:.68rem;color:var(--muted);width:20px;text-align:right;flex-shrink:0}}
+/* ── SECTION HEADERS ── */
+.section-head{{display:flex;align-items:center;gap:10px;margin:24px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--border)}}
+.section-head:first-child{{margin-top:0}}
+.section-label{{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text)}}
+.section-count{{font-size:11px;color:var(--muted);background:var(--s2);border:1px solid var(--border);padding:1px 8px;border-radius:999px;margin-left:auto}}
 
-/* ── Section headers ── */
-.section-head{{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:28px}}
-.section-head h2{{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}}
-.section-head .dot{{width:6px;height:6px;border-radius:50%;flex-shrink:0}}
-.section-count{{font-size:.7rem;color:var(--muted);padding:1px 8px;background:var(--s2);border-radius:999px;border:1px solid var(--border)}}
-.section-divider{{flex:1;height:1px;background:var(--border)}}
+/* ── RELEASE GRID ── */
+.release-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:12px}}
+.release-card{{background:#0c0900;border:1px solid #2a1c00;border-top:2px solid var(--amber);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:9px;transition:border-color .12s,box-shadow .12s}}
+.release-card:hover{{border-color:#3d2900;box-shadow:0 4px 24px rgba(245,158,11,.1)}}
+.rc-header{{display:flex;align-items:center;gap:6px;flex-wrap:wrap}}
+.rc-headline{{font-size:14px;font-weight:700;line-height:1.35;letter-spacing:-.01em}}
+.rc-headline a{{color:var(--text);text-decoration:none}}
+.rc-headline a:hover{{color:var(--amber)}}
+.rc-orig{{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.4}}
+.rc-what{{font-size:12.5px;color:#fef3c7;font-style:italic;line-height:1.5}}
+.rc-bullets{{display:flex;flex-direction:column;gap:5px}}
+.rc-bullet{{font-size:12.5px;color:#d4d8e8;display:flex;gap:7px;line-height:1.45}}
+.rc-bullet::before{{content:'✓';color:var(--amber);flex-shrink:0;font-weight:700}}
+.rc-who{{font-size:11.5px;color:#6ee7b7;padding-top:8px;border-top:1px solid #2a1c00}}
+.rc-impact{{font-size:12px;color:var(--amber);display:flex;gap:5px;align-items:flex-start}}
+.rc-impact::before{{content:'→';flex-shrink:0}}
 
-/* ── Grids ── */
-.grid-releases{{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;margin-bottom:8px}}
-.grid-trending{{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:8px}}
-.grid-all{{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}}
+/* ── STORY LIST ── */
+.story-list{{display:flex;flex-direction:column}}
+.story{{padding:13px 14px;border-radius:var(--r);border:1px solid transparent;display:flex;flex-direction:column;gap:5px;transition:background .1s,border-color .1s}}
+.story:hover{{background:var(--s2);border-color:var(--border)}}
+.story-meta{{display:flex;align-items:center;gap:6px;flex-wrap:wrap}}
+.src-chip{{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid;white-space:nowrap}}
+.badge-new{{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);letter-spacing:.06em;text-transform:uppercase}}
+.badge-hot{{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.2)}}
+.badge-release-sm{{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);letter-spacing:.06em;text-transform:uppercase}}
+.story-time{{font-size:10.5px;color:var(--dim);font-family:var(--mono);margin-left:auto}}
+.story-headline{{font-size:14.5px;font-weight:700;line-height:1.35;letter-spacing:-.01em;color:var(--text)}}
+.story-headline a{{color:inherit;text-decoration:none}}
+.story-headline a:hover{{color:var(--accent)}}
+.story-orig{{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.4}}
+.story-summary{{font-size:13px;color:#7a83a0;line-height:1.65}}
+.story-impact{{font-size:12.5px;color:var(--accent);display:flex;gap:5px;align-items:flex-start}}
+.story-impact::before{{content:'→';flex-shrink:0}}
+.nl-bullets{{display:flex;flex-direction:column;gap:3px;margin-top:1px}}
+.nl-bullet{{font-size:13px;color:#7a83a0;display:flex;gap:7px;line-height:1.55}}
+.nl-bullet::before{{content:'·';color:var(--accent);flex-shrink:0;font-weight:700;font-size:16px;line-height:1.2}}
 
-/* ── Cards ── */
-.card{{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;transition:transform .12s,box-shadow .12s;display:flex;flex-direction:column;gap:9px}}
-.card:hover{{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4)}}
-.card-release{{background:var(--amber-bg);border-color:#78350f;box-shadow:0 0 0 1px #92400e33}}
-.card-release:hover{{box-shadow:0 8px 32px rgba(245,158,11,.15)}}
-.card-trending{{background:#0f1a2e;border-color:#1e3a5f}}
-.card-trending:hover{{box-shadow:0 8px 32px rgba(96,165,250,.12)}}
+/* ── JARGON ── */
+.jargon{{border-bottom:1px dotted var(--accent);cursor:help;position:relative}}
+.jargon[title]:hover::after{{content:attr(title);position:absolute;bottom:100%;left:0;background:var(--s2);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;font-size:11.5px;color:var(--text);white-space:normal;max-width:220px;z-index:200;margin-bottom:5px;line-height:1.5;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.6)}}
 
-/* Card internals */
-.card-top{{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}}
-.card-plain-headline{{font-size:.95rem;font-weight:700;line-height:1.4;flex:1}}
-.card-plain-headline a{{color:var(--text);text-decoration:none}}
-.card-plain-headline a:hover{{color:#818cf8}}
-.card-orig-title{{font-size:.73rem;color:var(--muted);margin-top:2px;line-height:1.4}}
-.card-score{{flex-shrink:0;font-size:.7rem;font-weight:700;padding:3px 7px;border-radius:6px;background:var(--s2);border:1px solid var(--border);white-space:nowrap}}
-.score-5{{color:#34d399;border-color:#064e3b}}
-.score-4{{color:#a3e635;border-color:#1a2e05}}
-.score-3{{color:#fbbf24;border-color:#451a03}}
-.score-low{{color:var(--muted)}}
+/* ── STATES ── */
+.ollama-warn{{background:#0e0700;border:1px solid #3a1a00;border-radius:var(--r);padding:11px 15px;font-size:13px;color:#fcd34d;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}}
+.empty{{color:var(--muted);font-size:13px;padding:24px;text-align:center;background:var(--s1);border:1px dashed var(--border);border-radius:var(--r)}}
 
-.card-badges{{display:flex;flex-wrap:wrap;gap:4px;align-items:center}}
-.badge{{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700;white-space:nowrap}}
-.badge-trending{{background:#1e3a5f;color:#93c5fd;border:1px solid #1d4ed8}}
-.badge-type{{border:1px solid currentColor;background:transparent;opacity:.85}}
-.badge-new-today{{background:#052e16;color:#34d399;border:1px solid #065f46}}
-
-/* Revolution-O-Meter */
-.rev-badge{{padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700;border:1px solid currentColor}}
-.rev-game-changer{{color:#f87171;background:#1a0505}}
-.rev-notable{{color:#fbbf24;background:#1c1202}}
-.rev-incremental{{color:#60a5fa;background:#0c1a2e}}
-
-/* Hype vs Real */
-.hype-badge{{padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700;border:1px solid currentColor}}
-.hype-real{{color:#34d399;background:#052e16}}
-.hype-research{{color:#a78bfa;background:#1e1040}}
-.hype-opinion{{color:#94a3b8;background:#1e293b}}
-.hype-hype{{color:#fb923c;background:#1c0a00}}
-
-/* Life area */
-.area-badge{{padding:2px 8px;border-radius:999px;font-size:.65rem;font-weight:700;border:1px solid currentColor}}
-
-/* Read time */
-.read-time{{font-size:.65rem;color:var(--muted);background:var(--s2);border:1px solid var(--border);padding:2px 7px;border-radius:999px}}
-
-.card-meta{{font-size:.72rem;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}}
-
-/* Card summary */
-.card-summary{{font-size:.875rem;color:#c7d2fe;line-height:1.7;background:var(--s2);border-radius:8px;padding:11px 13px}}
-.card-summary ul{{padding-left:14px;display:flex;flex-direction:column;gap:4px}}
-.card-summary li{{list-style:none;padding-left:0}}
-.card-summary li::before{{content:"→ ";color:var(--muted)}}
-
-/* Impact box */
-.impact-box{{background:#0a1628;border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:8px 12px;font-size:.82rem;color:#bfdbfe;line-height:1.6;margin-top:2px}}
-
-/* Release card layouts */
-.rel-what{{font-size:.83rem;color:#fef3c7;margin-bottom:8px;font-style:italic}}
-.rel-bullets{{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}}
-.rel-bullet{{font-size:.83rem;color:#e8eaf6;display:flex;gap:7px}}
-.rel-bullet::before{{content:"✓";color:#f59e0b;font-weight:700;flex-shrink:0}}
-.rel-who{{font-size:.78rem;color:#6ee7b7;padding-top:6px;border-top:1px solid #78350f}}
-.no-summary{{font-size:.78rem;color:var(--muted);font-style:italic}}
-
-/* Before / After comparison */
-.before-after{{display:flex;align-items:center;gap:8px;background:var(--s2);border-radius:8px;padding:10px 12px;margin-top:2px}}
-.ba-col{{flex:1;text-align:center}}
-.ba-lbl{{display:block;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}}
-.ba-old .ba-lbl{{color:#6b7280}}
-.ba-new .ba-lbl{{color:#f59e0b}}
-.ba-val{{font-size:.78rem;font-weight:600;color:var(--text)}}
-.ba-old .ba-val{{color:#6b7280}}
-.ba-arr{{font-size:1.2rem;color:#f59e0b;flex-shrink:0}}
-
-/* Share button */
-.share-btn{{background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.68rem;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}}
-.share-btn:hover{{border-color:#818cf8;color:#818cf8}}
-.share-btn.copied{{border-color:#34d399;color:#34d399}}
-
-/* Jargon tooltip */
-.jargon{{border-bottom:1px dotted #818cf8;cursor:help;text-decoration:none}}
-.jargon[title]:hover::after{{content:attr(title);position:absolute;background:#1e1b4b;border:1px solid #3730a3;border-radius:6px;padding:6px 10px;font-size:.75rem;color:#e0e7ff;white-space:normal;max-width:240px;z-index:200;margin-top:4px;line-height:1.5;pointer-events:none}}
-.jargon[title]{{position:relative}}
-
-/* Ollama warning */
-.ollama-warn{{background:#1c0a00;border:1px solid #7c2d12;border-radius:var(--r);padding:12px 16px;font-size:.85rem;color:#fcd34d;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start}}
-
-/* Empty state */
-.empty{{color:var(--muted);font-size:.85rem;padding:20px;text-align:center;background:var(--s1);border-radius:var(--r);border:1px dashed var(--border)}}
-
-/* ── Mobile responsive ── */
-@media (max-width:900px){{
-  .brief-outer{{grid-template-columns:1fr}}
-}}
-@media (max-width:640px){{
-  nav,.filter-bar,.page{{padding-left:14px;padding-right:14px}}
-  .timeline-strip{{padding:6px 14px}}
-  .grid-releases,.grid-trending,.grid-all{{grid-template-columns:1fr}}
-  .hero{{padding:20px 18px}}
-  .hero-title{{font-size:1.15rem}}
-  .stat-pills{{display:none}}
-  .filter-label{{width:56px;font-size:.6rem}}
-  .card{{padding:13px 14px}}
-  .before-after{{flex-direction:column;gap:4px}}
-  .ba-arr{{transform:rotate(90deg)}}
-  .brief{{padding:16px 18px}}
-}}
+/* ── RESPONSIVE ── */
+@media(max-width:860px){{.layout{{grid-template-columns:1fr;padding:20px 20px 60px}}.sidebar{{display:none}}.release-grid{{grid-template-columns:1fr}}}}
+@media(max-width:580px){{nav,.filter-bar{{padding:0 16px}}.layout{{padding:16px 16px 60px}}.hero{{padding:20px 18px}}.hero-headline{{font-size:18px}}.brief{{padding:14px 16px}}}}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-brand">
-    <h1>AI Today</h1>
-    <span class="nav-meta">{date}</span>
+  <div class="brand">
+    <div class="brand-mark">AI</div>
+    <div>
+      <div class="brand-name">AI Brief</div>
+      <div class="brand-date">{date}</div>
+    </div>
   </div>
-  <div class="stat-pills">
-    <span class="stat-pill" style="color:#f59e0b;border-color:#78350f">{releases} releases</span>
-    <span class="stat-pill" style="color:#60a5fa;border-color:#1e3a5f">{trending_count} trending</span>
-    <span class="stat-pill" style="color:#34d399;border-color:#065f46">{new_today_count} new today</span>
-    <span class="stat-pill" style="color:var(--muted)">{count} stories · {sources} sources</span>
+  <div class="nav-right">
+    <div class="nav-stat"><span class="nav-dot" style="background:var(--amber)"></span><strong>{releases}</strong>&nbsp;releases</div>
+    <div class="nav-stat"><span class="nav-dot" style="background:var(--red)"></span><strong>{trending_count}</strong>&nbsp;trending</div>
+    <div class="nav-stat"><span class="nav-dot" style="background:var(--accent)"></span><strong>{count}</strong>&nbsp;stories</div>
   </div>
 </nav>
 
-{timeline_block}
-
-<div class="filter-bar">
-  <div class="filter-row">
-    <span class="filter-label">View</span>
-    <span class="chip on"  data-f="all"         style="background:#1e293b;color:#e2e8f0;border-color:#334155">All</span>
-    <span class="chip off" data-f="__rel__"     style="background:#78350f22;color:#fef3c7;border-color:#78350f">🚀 Releases</span>
-    <span class="chip off" data-f="__trend__"   style="background:#1e3a5f22;color:#bfdbfe;border-color:#1e3a5f">🔥 Trending</span>
-    {new_today_chip}
+<div class="filter-wrap">
+  <div class="filter-primary">
+    <span class="tab on"  data-f="all"><span class="tab-count">{count}</span> All</span>
+    <span class="tab off" data-f="__rel__">🚀 Releases</span>
+    <span class="tab off" data-f="__trend__">🔥 Trending</span>
+    {new_today_tab}
   </div>
-  <div class="filter-row">
-    <span class="filter-label">Life Area</span>
-    <span class="chip off" data-f="__area_work__"     style="background:#1e293b22;color:#60a5fa;border-color:#1e3a5f">💼 Work</span>
-    <span class="chip off" data-f="__area_coding__"   style="background:#05291522;color:#34d399;border-color:#065f46">💻 Coding</span>
-    <span class="chip off" data-f="__area_creative__" style="background:#2d124422;color:#c084fc;border-color:#7e22ce">🎨 Creative</span>
-    <span class="chip off" data-f="__area_health__"   style="background:#1a042422;color:#f43f5e;border-color:#9f1239">🏥 Health</span>
-    <span class="chip off" data-f="__area_education__" style="background:#1c120222;color:#fbbf24;border-color:#92400e">📚 Education</span>
+  <div class="filter-sources">
+    <span class="src-label">Sources</span>
+    <span class="src-cat off" data-f="__cat_lab__"><span class="src-dot" style="background:#4ade80"></span>Labs</span>
+    <span class="src-cat off" data-f="__cat_news__"><span class="src-dot" style="background:#60a5fa"></span>News</span>
+    <span class="src-cat off" data-f="__cat_creator__"><span class="src-dot" style="background:#c084fc"></span>Creators</span>
+    <span class="src-cat off" data-f="__cat_x__"><span class="src-dot" style="background:#94a3b8"></span>X · Twitter</span>
   </div>
-  <div class="filter-row">
-    <span class="filter-label">Companies</span>
-    {lab_chips}
-  </div>
-  <div class="filter-row">
-    <span class="filter-label">News</span>
-    {news_chips}
-  </div>
-  {creator_row}
-  {x_row}
 </div>
 
-<div class="page">
+<div class="layout">
 
 {hero_block}
+{brief_block}
 
-<div class="brief-outer">
-  {brief_block}
-  {scoreboard_block}
+<div class="main">
+  {warn_block}
+  {releases_block}
+  {trending_block}
+  {all_block}
 </div>
 
-{warn_block}
-
-{new_today_block}
-
-<div id="sec-releases">{releases_block}</div>
-<div id="sec-trending">{trending_block}</div>
-
-<div id="sec-all">
-<div class="section-head">
-  <span class="dot" style="background:var(--muted)"></span>
-  <h2 style="color:var(--muted)">All Stories</h2>
-  <span class="section-count">{count} items</span>
-  <span class="section-divider"></span>
-</div>
-<div class="grid-all" id="all-grid">
-  {all_cards}
-</div>
+<div class="sidebar">
+  {timeline_widget}
+  {scoreboard_widget}
 </div>
 
-</div><!-- /page -->
+</div>
 
 <script>
 (function(){{
-  const chips    = document.querySelectorAll('.chip[data-f]');
-  const allCards = Array.from(document.querySelectorAll('.card[data-src]'));
+  const tabs     = document.querySelectorAll('.tab[data-f]');
+  const srcCats  = document.querySelectorAll('.src-cat[data-f]');
+  const allItems = Array.from(document.querySelectorAll('[data-src]'));
   const secRel   = document.getElementById('sec-releases');
   const secTrend = document.getElementById('sec-trending');
   const secAll   = document.getElementById('sec-all');
 
-  function show(el) {{ if(el) el.style.display=''; }}
-  function hide(el) {{ if(el) el.style.display='none'; }}
-  function hasVisible(sec) {{
-    return sec && [...sec.querySelectorAll('.card')].some(c=>c.style.display!=='none');
-  }}
+  function show(el){{if(el)el.style.display='';}}
+  function hide(el){{if(el)el.style.display='none';}}
+  function hasVisible(sec){{return sec&&[...sec.querySelectorAll('[data-src]')].some(c=>c.style.display!=='none');}}
 
-  function applyFilter(f) {{
-    chips.forEach(c=>{{
-      c.classList.toggle('on',  c.dataset.f===f);
-      c.classList.toggle('off', c.dataset.f!==f);
-    }});
+  function clearSrcCats(){{srcCats.forEach(c=>{{c.classList.remove('on');c.classList.add('off');}});}}
 
-    if (f==='all') {{
-      show(secRel); show(secTrend); show(secAll);
-      allCards.forEach(c=>c.style.display='');
-
-    }} else if (f==='__rel__') {{
-      show(secRel); hide(secTrend); hide(secAll);
-
-    }} else if (f==='__trend__') {{
-      hide(secRel); show(secTrend); hide(secAll);
-      allCards.forEach(c=>{{c.style.display=c.dataset.trend==='1'?'':'none';}});
-      if(!hasVisible(secTrend)) hide(secTrend);
-
-    }} else if (f==='__new_today__') {{
-      show(secRel); show(secTrend); show(secAll);
-      allCards.forEach(c=>{{c.style.display=c.dataset.newtoday==='1'?'':'none';}});
-      if(!hasVisible(secRel))   hide(secRel);
-      if(!hasVisible(secTrend)) hide(secTrend);
-
-    }} else if (f.startsWith('__area_')) {{
-      const area = f.replace('__area_','').replace('__','');
-      show(secRel); show(secTrend); show(secAll);
-      allCards.forEach(c=>{{c.style.display=c.dataset.area===area?'':'none';}});
-      if(!hasVisible(secRel))   hide(secRel);
-      if(!hasVisible(secTrend)) hide(secTrend);
-
-    }} else {{
-      show(secRel); show(secTrend); show(secAll);
-      allCards.forEach(c=>{{c.style.display=c.dataset.src===f?'':'none';}});
-      if(!hasVisible(secRel))   hide(secRel);
-      if(!hasVisible(secTrend)) hide(secTrend);
-      const grid=document.getElementById('all-grid');
-      if(grid){{
-        const vis=[...grid.querySelectorAll('.card')].filter(c=>c.style.display!=='none');
-        vis.sort((a,b)=>parseInt(b.dataset.ts||0)-parseInt(a.dataset.ts||0));
-        vis.forEach(c=>grid.appendChild(c));
-      }}
+  function applyFilter(f){{
+    tabs.forEach(c=>{{c.classList.toggle('on',c.dataset.f===f);c.classList.toggle('off',c.dataset.f!==f);}});
+    clearSrcCats();
+    if(f==='all'){{
+      show(secRel);show(secTrend);show(secAll);allItems.forEach(c=>c.style.display='');
+    }}else if(f==='__rel__'){{
+      show(secRel);hide(secTrend);hide(secAll);allItems.forEach(c=>c.style.display='');
+    }}else if(f==='__trend__'){{
+      hide(secRel);show(secTrend);hide(secAll);
+      allItems.forEach(c=>{{c.style.display=c.dataset.trend==='1'?'':'none';}});
+      if(!hasVisible(secTrend))hide(secTrend);
+    }}else if(f==='__new_today__'){{
+      show(secRel);show(secTrend);show(secAll);
+      allItems.forEach(c=>{{c.style.display=c.dataset.newtoday==='1'?'':'none';}});
+      if(!hasVisible(secRel))hide(secRel);if(!hasVisible(secTrend))hide(secTrend);
     }}
   }}
 
-  chips.forEach(c=>c.addEventListener('click',()=>applyFilter(c.dataset.f)));
+  function applySrcFilter(el, f){{
+    const isOn = el.classList.contains('on');
+    clearSrcCats();
+    tabs.forEach(c=>{{c.classList.toggle('on',c.dataset.f==='all');c.classList.toggle('off',c.dataset.f!=='all');}});
+    if(isOn){{
+      allItems.forEach(c=>c.style.display='');
+      show(secRel);show(secTrend);show(secAll);
+      return;
+    }}
+    el.classList.add('on');el.classList.remove('off');
+    const cat=f.replace('__cat_','').replace('__','');
+    allItems.forEach(c=>{{c.style.display=c.dataset.cat===cat?'':'none';}});
+    show(secRel);show(secTrend);show(secAll);
+    if(!hasVisible(secRel))hide(secRel);
+    if(!hasVisible(secTrend))hide(secTrend);
+    const list=document.querySelector('#sec-all .story-list');
+    if(list){{const vis=[...list.querySelectorAll('[data-src]')].filter(c=>c.style.display!=='none');vis.sort((a,b)=>parseInt(b.dataset.ts||0)-parseInt(a.dataset.ts||0));vis.forEach(c=>list.appendChild(c));}}
+  }}
 
-  // Share button
-  document.querySelectorAll('.share-btn').forEach(btn=>{{
-    btn.addEventListener('click',()=>{{
-      const title = btn.dataset.title||'';
-      const link  = btn.dataset.link||'';
-      const sum   = btn.dataset.sum||'';
-      const text  = title + (sum ? '\\n\\n'+sum : '') + (link ? '\\n'+link : '');
-      navigator.clipboard.writeText(text).then(()=>{{
-        btn.textContent='✓ Copied!';
-        btn.classList.add('copied');
-        setTimeout(()=>{{ btn.textContent='📤 Share'; btn.classList.remove('copied'); }},2000);
-      }}).catch(()=>{{
-        btn.textContent='Copy failed';
-        setTimeout(()=>{{ btn.textContent='📤 Share'; }},2000);
-      }});
-    }});
-  }});
+  tabs.forEach(c=>c.addEventListener('click',()=>applyFilter(c.dataset.f)));
+  srcCats.forEach(c=>c.addEventListener('click',()=>applySrcFilter(c,c.dataset.f)));
 }})();
 </script>
 </body>
@@ -1030,182 +939,104 @@ nav{{position:sticky;top:0;z-index:100;background:rgba(13,15,26,.94);backdrop-fi
 
 # ── Render helpers ─────────────────────────────────────────────────────────────
 
-def score_cls(s):
-    if s >= 5: return "score-5"
-    if s >= 4: return "score-4"
-    if s >= 3: return "score-3"
-    return "score-low"
-
-def star_str(s):
-    return "★" * s + "☆" * (5 - s)
-
-def render_summary(item):
-    s = item.get("ai_summary")
-    if not s:
-        return '<p class="no-summary">Summary unavailable — Ollama offline</p>'
-    if item.get("is_release"):
-        return _render_release(s, item)
-    if item["type"] == "newsletter":
-        return _render_bullets(s)
-    return f'<div class="card-summary">{jargon_wrap(esc(s))}</div>'
-
-def _render_bullets(s):
-    lines = [l.strip().lstrip("•-").strip() for l in s.split("\n") if l.strip().startswith(("•", "-"))]
-    if not lines:
-        lines = [l.strip() for l in s.split("\n") if l.strip()][:3]
-    items_html = "".join(f"<li>{jargon_wrap(esc(l))}</li>" for l in lines[:3])
-    return f'<div class="card-summary"><ul>{items_html}</ul></div>'
-
-def _render_release(s, item):
-    what = who = impact_line = ""
-    bullets = []
-    for line in s.split("\n"):
-        l = line.strip()
-        u = l.upper()
-        if u.startswith("WHAT:"):
-            what = l[5:].strip()
-        elif u.startswith("WHO:"):
-            who = l[4:].strip()
-        elif u.startswith("IMPACT:"):
-            impact_line = l[7:].strip()
-        elif l.startswith("•") or l.startswith("-"):
-            bullets.append(l.lstrip("•-").strip())
-    if not what and not bullets:
-        return f'<div class="card-summary">{jargon_wrap(esc(s))}</div>'
-    what_h   = f'<div class="rel-what">{jargon_wrap(esc(what))}</div>' if what else ""
-    bul_h    = ""
-    if bullets:
-        bul_h = '<div class="rel-bullets">' + "".join(
-            f'<div class="rel-bullet">{jargon_wrap(esc(b))}</div>' for b in bullets[:3]
-        ) + "</div>"
-    who_h    = f'<div class="rel-who">Best for: {esc(who)}</div>' if who else ""
-    return f'<div class="card-summary">{what_h}{bul_h}{who_h}</div>'
-
+def _src_chip(item):
+    c = item["color"]
+    return (f'<span class="src-chip" style="color:{c};background:{c}18;border-color:{c}44">'
+            f'{esc(item["source"])}</span>')
 
 def make_card(item, extra_class=""):
-    st          = STORY_TYPE_CONFIG.get(item["story_type"], STORY_TYPE_CONFIG["general"])
-    sc          = item["score"]
-    is_r        = item.get("is_release", False)
-    is_t        = item.get("trending", False)
-    pred        = item.get("predecessor")
-    order_label = item.get("release_order_label")
-    area        = item.get("life_area") or ""
-    is_new      = item.get("is_new_today", False)
-    rev         = item.get("revolution_level", "incremental")
-    hype        = item.get("hype_type", "real")
-    read_time   = item.get("read_time", "")
-    plain_h     = item.get("plain_headline", "").strip()
-    impact      = item.get("impact", "").strip()
+    """Render a story as a clean list row."""
+    is_r   = item.get("is_release", False)
+    is_t   = item.get("trending", False)
+    is_new = item.get("is_new_today", False)
+    area   = item.get("life_area") or ""
+    plain_h = item.get("plain_headline", "").strip()
+    impact  = item.get("impact", "").strip()
+    ts      = int(item["date_raw"].timestamp()) if item.get("date_raw") else 0
 
-    # Title block: plain headline (if available) + original title as sub-label
-    if plain_h and plain_h.lower() != item["title"].lower():
-        title_html = (
-            f'<div class="card-plain-headline">'
-            f'<a href="{item["link"]}" target="_blank" rel="noopener">{esc(plain_h)}</a>'
-            f'</div>'
-            f'<div class="card-orig-title">{esc(item["title"])}</div>'
-        )
-    else:
-        title_html = (
-            f'<div class="card-plain-headline">'
-            f'<a href="{item["link"]}" target="_blank" rel="noopener">{esc(item["title"])}</a>'
-            f'</div>'
-        )
+    title_text = plain_h if (plain_h and plain_h.lower() != item["title"].lower()) else item["title"]
+    orig_html  = (f'<div class="story-orig">{esc(item["title"])}</div>'
+                  if (plain_h and plain_h.lower() != item["title"].lower()) else "")
 
-    # Revolution badge
-    rev_label = REV_CONFIG[rev]["label"]
-    rev_cls   = f"rev-badge rev-{rev}"
+    badges = _src_chip(item)
+    if is_new: badges += '<span class="badge-new">NEW</span>'
+    if is_t:   badges += '<span class="badge-hot">🔥 HOT</span>'
+    if is_r:   badges += '<span class="badge-release-sm">🚀 RELEASE</span>'
+    time_html = f'<span class="story-time">{esc(item["date"])}</span>'
 
-    # Hype badge
-    hype_label = HYPE_CONFIG[hype]["label"]
-    hype_cls   = f"hype-badge hype-{hype}"
+    s = item.get("ai_summary", "")
+    summary_html = ""
+    if s:
+        if item["type"] == "newsletter":
+            lines = [l.strip().lstrip("•-").strip() for l in s.split("\n") if l.strip().startswith(("•", "-"))]
+            if not lines:
+                lines = [l.strip() for l in s.split("\n") if l.strip()][:3]
+            bullets = "".join(f'<div class="nl-bullet">{jargon_wrap(esc(l))}</div>' for l in lines[:3])
+            summary_html = f'<div class="nl-bullets">{bullets}</div>'
+        else:
+            summary_html = f'<div class="story-summary">{jargon_wrap(esc(s))}</div>'
 
-    # Life area badge
-    area_badge = ""
-    if area and area in AREA_CONFIG:
-        ac = AREA_CONFIG[area]
-        area_badge = (f'<span class="area-badge" style="color:{ac["color"]};background:{ac["color"]}11;'
-                      f'border:1px solid {ac["color"]}44">{ac["emoji"]} {ac["label"]}</span>')
-
-    # Standard badges
-    order_colors = {
-        "Latest Release":   ("background:#064e3b;color:#6ee7b7;border:1px solid #065f46", "🆕 Latest"),
-        "Previous Release": ("background:#451a03;color:#fcd34d;border:1px solid #78350f", "⏮ Previous"),
-        "Earlier Release":  ("background:#1e1b4b;color:#a5b4fc;border:1px solid #3730a3", "📅 Earlier"),
-        "Archive":          ("background:#1e293b;color:#94a3b8;border:1px solid #334155", "🗂 Archive"),
-    }
-    type_badge  = f'<span class="badge badge-type" style="color:{st["color"]}">{st["emoji"]} {st["label"]}</span>'
-    src_badge   = (f'<span class="badge" style="background:{item["color"]}22;color:{item["color"]};'
-                   f'border:1px solid {item["color"]}44">via {esc(item["source"])}</span>')
-    trend_badge = '<span class="badge badge-trending">🔥 Trending</span>' if is_t else ""
-    new_badge   = '<span class="badge badge-new-today">🆕 New</span>' if is_new else ""
-    pred_badge  = ""
-    if is_r and pred:
-        pred_badge = (f'<span class="badge" style="background:#78350f44;color:#fbbf24;'
-                      f'border:1px solid #92400e">replaces {esc(pred[0])}</span>')
-    about       = item.get("about")
-    about_badge = ""
-    if about:
-        src_lower = item["source"].lower().replace(" ai", "").replace(" ml", "")
-        if about.lower() not in src_lower:
-            about_badge = (f'<span class="badge" style="background:#0f2240;color:#93c5fd;'
-                           f'border:1px solid #1e40af;font-weight:800">re: {esc(about)}</span>')
-    order_badge = ""
-    if order_label and order_label in order_colors:
-        style_str, label_text = order_colors[order_label]
-        order_badge = f'<span class="badge" style="{style_str}">{label_text}</span>'
-
-    # Before/After for releases with predecessor
-    before_after_html = ""
-    if is_r and pred:
-        before_after_html = (
-            f'<div class="before-after">'
-            f'<div class="ba-col ba-old"><span class="ba-lbl">BEFORE</span>'
-            f'<span class="ba-val">{esc(pred[0])}</span></div>'
-            f'<span class="ba-arr">→</span>'
-            f'<div class="ba-col ba-new"><span class="ba-lbl">NOW</span>'
-            f'<span class="ba-val">New from {esc(pred[1])}</span></div>'
-            f'</div>'
-        )
-
-    # Impact box (articles/videos)
-    impact_html = ""
-    if impact and not is_r:
-        impact_html = f'<div class="impact-box">💡 {jargon_wrap(esc(impact))}</div>'
-
-    # Read time + share button
-    rt_html   = f'<span class="read-time">{esc(read_time)}</span>' if read_time else ""
-    share_sum = (item.get("ai_summary") or "")[:200].replace('"', '').replace('\n', ' ')
-    share_btn = (f'<button class="share-btn" data-title="{esc(item["title"])}" '
-                 f'data-link="{esc(item["link"])}" data-sum="{esc(share_sum)}">📤 Share</button>')
-
-    # Card class
-    card_cls = "card"
-    if is_r:   card_cls += " card-release"
-    elif is_t: card_cls += " card-trending"
-    if extra_class: card_cls += f" {extra_class}"
-
-    summary_html = render_summary(item)
-    ts = int(item["date_raw"].timestamp()) if item.get("date_raw") else 0
+    impact_html = f'<div class="story-impact">{jargon_wrap(esc(impact))}</div>' if impact else ""
 
     return (
-        f'<div class="{card_cls}" data-src="{esc(item["source"])}" '
+        f'<article class="story" data-src="{esc(item["source"])}" data-cat="{esc(item["category"])}" '
         f'data-rel="{"1" if is_r else "0"}" data-trend="{"1" if is_t else "0"}" '
         f'data-area="{esc(area)}" data-newtoday="{"1" if is_new else "0"}" data-ts="{ts}">\n'
-        f'  <div class="card-top">\n'
-        f'    <div style="flex:1">{title_html}</div>\n'
-        f'    <span class="card-score {score_cls(sc)}">{star_str(sc)}</span>\n'
-        f'  </div>\n'
-        f'  <div class="card-badges">{order_badge}{about_badge}{type_badge}'
-        f'{src_badge}{trend_badge}{new_badge}{pred_badge}</div>\n'
-        f'  <div class="card-badges" style="gap:4px">'
-        f'<span class="{rev_cls}">{rev_label}</span>'
-        f'<span class="{hype_cls}">{hype_label}</span>'
-        f'{area_badge}</div>\n'
-        f'  <div class="card-meta"><span>{item["date"]}</span>{rt_html}{share_btn}</div>\n'
-        f'  {before_after_html}\n'
+        f'  <div class="story-meta">{badges}{time_html}</div>\n'
+        f'  <div class="story-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>\n'
+        f'  {orig_html}\n'
         f'  {summary_html}\n'
         f'  {impact_html}\n'
+        f'</article>'
+    )
+
+def make_release_card(item):
+    """Render a release as an amber-accented card."""
+    is_t   = item.get("trending", False)
+    is_new = item.get("is_new_today", False)
+    area   = item.get("life_area") or ""
+    plain_h = item.get("plain_headline", "").strip()
+    impact  = item.get("impact", "").strip()
+    ts      = int(item["date_raw"].timestamp()) if item.get("date_raw") else 0
+
+    title_text = plain_h if (plain_h and plain_h.lower() != item["title"].lower()) else item["title"]
+    orig_html  = (f'<div class="rc-orig">{esc(item["title"])}</div>'
+                  if (plain_h and plain_h.lower() != item["title"].lower()) else "")
+
+    badges = '<span class="badge-release-sm">🚀 RELEASE</span>' + _src_chip(item)
+    if is_new: badges += '<span class="badge-new">NEW</span>'
+    if is_t:   badges += '<span class="badge-hot">🔥 HOT</span>'
+
+    s = item.get("ai_summary", "")
+    what = who = imp_line = ""
+    bullets = []
+    if s:
+        for line in s.split("\n"):
+            l = line.strip(); u = l.upper()
+            if u.startswith("WHAT:"):    what    = l[5:].strip()
+            elif u.startswith("WHO:"):   who     = l[4:].strip()
+            elif u.startswith("IMPACT:"): imp_line = l[7:].strip()
+            elif l.startswith(("•", "-")): bullets.append(l.lstrip("•-").strip())
+        if not imp_line: imp_line = impact
+    else:
+        imp_line = impact
+
+    what_h    = f'<div class="rc-what">{jargon_wrap(esc(what))}</div>' if what else ""
+    bul_h     = ('<div class="rc-bullets">' +
+                 "".join(f'<div class="rc-bullet">{jargon_wrap(esc(b))}</div>' for b in bullets[:3]) +
+                 "</div>") if bullets else ""
+    who_h     = f'<div class="rc-who">Best for: {esc(who)}</div>' if who else ""
+    impact_h  = f'<div class="rc-impact">{jargon_wrap(esc(imp_line))}</div>' if imp_line else ""
+    no_sum_h  = '<div class="story-summary" style="font-style:italic;color:var(--muted)">Summary unavailable — run Ollama for summaries</div>' if not s else ""
+
+    return (
+        f'<div class="release-card" data-src="{esc(item["source"])}" data-cat="{esc(item["category"])}" '
+        f'data-rel="1" data-trend="{"1" if is_t else "0"}" '
+        f'data-area="{esc(area)}" data-newtoday="{"1" if is_new else "0"}" data-ts="{ts}">\n'
+        f'  <div class="rc-header">{badges}'
+        f'<span class="story-time">{esc(item["date"])}</span></div>\n'
+        f'  <div class="rc-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>\n'
+        f'  {orig_html}{what_h}{bul_h}{who_h}{impact_h}{no_sum_h}\n'
         f'</div>'
     )
 
@@ -1215,185 +1046,128 @@ def make_card(item, extra_class=""):
 def build_html(items, top3, ollama_ok, date_str, archive_dir):
     releases  = [i for i in items if i.get("is_release")]
     trending  = [i for i in items if i.get("trending") and not i.get("is_release")]
-    new_today = [i for i in items if i.get("is_new_today")]
     all_items = sorted(items, key=lambda x: x["score"], reverse=True)
 
-    # ── Hero: story of the day ──
-    top_item    = all_items[0] if all_items else None
-    hero_block  = ""
+    # Hero
+    hero_block = ""
+    top_item = all_items[0] if all_items else None
     if top_item:
-        h_title  = top_item.get("hero_title")  or top_item.get("plain_headline") or top_item["title"]
+        h_title  = top_item.get("hero_title") or top_item.get("plain_headline") or top_item["title"]
         h_why    = top_item.get("hero_why", "")
         h_action = top_item.get("hero_action", "") or top_item.get("impact", "")
-        rev      = top_item.get("revolution_level", "notable")
-        rc       = REV_CONFIG.get(rev, REV_CONFIG["notable"])
-        st       = STORY_TYPE_CONFIG.get(top_item["story_type"], STORY_TYPE_CONFIG["general"])
-        rt       = top_item.get("read_time", "")
-        hero_sub_html   = f'<div class="hero-sub">{esc(h_why)}</div>' if h_why else ""
-        hero_impact_html= f'<div class="hero-impact">💡 {esc(h_action)}</div>' if h_action else ""
+        color    = top_item["color"]
+        why_html    = f'<div class="hero-why">{esc(h_why)}</div>' if h_why else ""
+        impact_html = f'<div class="hero-impact">{jargon_wrap(esc(h_action))}</div>' if h_action else ""
         hero_block = (
             f'<div class="hero">\n'
-            f'  <div class="hero-eyebrow">⭐ Story of the Day &nbsp;·&nbsp; '
-            f'<span style="color:{rc["color"]}">{rc["label"]}</span></div>\n'
-            f'  <div class="hero-title"><a href="{top_item["link"]}" target="_blank" rel="noopener">'
-            f'{esc(h_title)}</a></div>\n'
-            f'  {hero_sub_html}\n'
-            f'  <div class="hero-meta">\n'
-            f'    <span class="badge badge-type" style="color:{st["color"]}">{st["emoji"]} {st["label"]}</span>\n'
-            f'    <span class="badge" style="background:{top_item["color"]}22;color:{top_item["color"]};'
-            f'border:1px solid {top_item["color"]}44">via {esc(top_item["source"])}</span>\n'
-            f'    <span class="read-time">{esc(rt)}</span>\n'
-            f'    <span style="color:var(--muted);font-size:.73rem">{top_item["date"]}</span>\n'
-            f'  </div>\n'
-            f'  {hero_impact_html}\n'
+            f'  <div class="hero-eyebrow">Story of the Day</div>\n'
+            f'  <div class="hero-headline"><a href="{top_item["link"]}" target="_blank" rel="noopener">{esc(h_title)}</a></div>\n'
+            f'  {why_html}\n'
+            f'  <div class="hero-footer">'
+            f'<span class="src-chip" style="color:{color};background:{color}18;border-color:{color}44">{esc(top_item["source"])}</span>'
+            f'<span class="story-time">{esc(top_item["date"])}</span></div>\n'
+            f'  {impact_html}\n'
             f'</div>'
         )
 
-    # ── Morning brief ──
-    brief_block = ""
+    # Morning brief
     if top3:
         lines = [l.strip() for l in top3.split("\n") if l.strip()]
         paras = "".join(f"<p>{esc(l)}</p>" for l in lines)
         brief_block = (
-            f'<div class="brief"><div class="brief-label">Morning Brief</div>'
-            f'<div class="brief-text">{paras}</div></div>'
+            f'<div class="brief">'
+            f'<div class="brief-icon">📰</div>'
+            f'<div class="brief-inner"><div class="brief-label">Morning Brief</div>'
+            f'<div class="brief-text">{paras}</div></div></div>'
         )
     else:
         brief_block = (
-            '<div class="brief"><div class="brief-label">Morning Brief</div>'
-            '<div class="brief-text"><p style="color:var(--muted)">Start Ollama to generate your daily briefing.</p>'
+            '<div class="brief">'
+            '<div class="brief-icon">📰</div>'
+            '<div class="brief-inner"><div class="brief-label">Morning Brief</div>'
+            '<div class="brief-offline">Start Ollama to generate your daily briefing.</div>'
             '</div></div>'
         )
 
-    # ── Scoreboard ──
-    scoreboard_block = build_scoreboard_html(items)
-
-    # ── Ollama warning ──
+    # Warn
     warn_block = ""
     if not ollama_ok:
         warn_block = (
-            '<div class="ollama-warn"><span>⚠️</span><span>Ollama is offline — '
-            'showing headlines and scores only. Run <code>ollama serve</code> '
-            'then re-run this script for plain-English summaries.</span></div>'
+            '<div class="ollama-warn"><span>⚠️</span><span>Ollama offline — '
+            'run <code>ollama serve</code> and re-run for AI summaries.</span></div>'
         )
 
-    # ── New today section ──
-    new_today_block = ""
-    if new_today:
-        nt_sorted   = sorted(new_today, key=lambda x: x["score"], reverse=True)
-        nt_cards    = "\n".join(make_card(i) for i in nt_sorted[:6])
-        new_today_block = (
-            f'<div id="sec-new-today">'
-            f'<div class="section-head">'
-            f'<span class="dot" style="background:#34d399"></span>'
-            f'<h2 style="color:#34d399">New Since Yesterday</h2>'
-            f'<span class="section-count">{len(new_today)} new</span>'
-            f'<span class="section-divider"></span>'
-            f'</div>'
-            f'<div class="grid-all">{nt_cards}</div>'
-            f'</div>'
-        )
-
-    # ── New Today chip ──
-    new_today_count = len(new_today)
-    new_today_chip  = ""
-    if new_today_count:
-        new_today_chip = (
-            f'<span class="chip off" data-f="__new_today__" '
-            f'style="background:#05291522;color:#34d399;border-color:#065f46">'
-            f'🆕 New Today ({new_today_count})</span>'
-        )
-
-    # ── Timeline ──
-    timeline_block = build_timeline_html(archive_dir)
-
-    # ── Releases section ──
+    # Releases
     releases_block = ""
     if releases:
         epoch      = datetime.min.replace(tzinfo=timezone.utc)
         sorted_rel = sorted(releases, key=lambda x: x.get("date_raw") or epoch, reverse=True)
-        cards_html = "\n".join(make_card(i) for i in sorted_rel)
+        cards_html = "\n".join(make_release_card(i) for i in sorted_rel)
         releases_block = (
+            f'<div id="sec-releases">'
             f'<div class="section-head">'
-            f'<span class="dot" style="background:#f59e0b"></span>'
-            f'<h2 style="color:#f59e0b">What\'s New</h2>'
-            f'<span class="section-count">{len(releases)} release{"s" if len(releases)!=1 else ""} detected</span>'
-            f'<span class="section-divider"></span>'
+            f'<span class="section-label">🚀 What\'s New</span>'
+            f'<span class="section-count">{len(releases)} release{"s" if len(releases)!=1 else ""}</span>'
             f'</div>'
-            f'<div class="grid-releases">{cards_html}</div>'
+            f'<div class="release-grid">{cards_html}</div>'
+            f'</div>'
         )
 
-    # ── Trending section ──
+    # Trending
     trending_block = ""
     if trending:
-        sorted_t   = sorted(trending, key=lambda x: x["score"], reverse=True)
-        cards_html = "\n".join(make_card(i) for i in sorted_t)
-        src_count  = len(set(i["source"] for i in trending))
+        sorted_t  = sorted(trending, key=lambda x: x["score"], reverse=True)
+        stories   = "\n".join(make_card(i) for i in sorted_t)
+        src_count = len(set(i["source"] for i in trending))
         trending_block = (
+            f'<div id="sec-trending">'
             f'<div class="section-head">'
-            f'<span class="dot" style="background:#60a5fa"></span>'
-            f'<h2 style="color:#60a5fa">Trending Now</h2>'
-            f'<span class="section-count">covered by {src_count}+ sources</span>'
-            f'<span class="section-divider"></span>'
+            f'<span class="section-label">🔥 Trending</span>'
+            f'<span class="section-count">{src_count}+ sources</span>'
             f'</div>'
-            f'<div class="grid-trending">{cards_html}</div>'
+            f'<div class="story-list">{stories}</div>'
+            f'</div>'
         )
 
-    # ── All stories ──
-    all_cards = "\n".join(make_card(i) for i in all_items)
-
-    # ── Filter chips ──
-    lab_chips = news_chips = creator_chips = x_chips = ""
-    seen = set()
-    for i in items:
-        src = i["source"]
-        if src in seen or not i.get("show_chip", True):
-            continue
-        seen.add(src)
-        color = i["color"]
-        chip  = (f'<span class="chip on" data-f="{esc(src)}" '
-                 f'style="background:{color}22;color:{color};border-color:{color}55">'
-                 f'{esc(src)}</span>')
-        cat = i["category"]
-        if cat == "lab":
-            lab_chips     += chip + "\n  "
-        elif cat == "creator":
-            creator_chips += chip + "\n  "
-        elif cat == "x":
-            x_chips       += chip + "\n  "
-        else:
-            news_chips    += chip + "\n  "
-
-    creator_row = (
-        f'<div class="filter-row"><span class="filter-label">Creators</span>{creator_chips}</div>'
-        if creator_chips.strip() else ""
+    # All stories
+    stories  = "\n".join(make_card(i) for i in all_items)
+    all_block = (
+        f'<div id="sec-all">'
+        f'<div class="section-head">'
+        f'<span class="section-label">All Stories</span>'
+        f'<span class="section-count">{len(items)}</span>'
+        f'</div>'
+        f'<div class="story-list">{stories}</div>'
+        f'</div>'
     )
-    x_row = (
-        f'<div class="filter-row"><span class="filter-label">X / Twitter</span>{x_chips}</div>'
-        if x_chips.strip() else ""
-    )
+
+    # Sidebar
+    timeline_widget   = build_timeline_html(archive_dir)
+    scoreboard_widget = build_scoreboard_html(items)
+
+    # New today tab
+    new_today_count = sum(1 for i in items if i.get("is_new_today"))
+    new_today_tab   = ""
+    if new_today_count:
+        new_today_tab = (
+            f'<span class="tab off" data-f="__new_today__">'
+            f'✨ New Today <span class="tab-count">{new_today_count}</span></span>'
+        )
 
     return HTML.format(
         date=date_str,
         count=len(items),
-        sources=len(seen),
         releases=len(releases),
         trending_count=len(trending),
-        new_today_count=new_today_count,
-        brief_block=brief_block,
-        scoreboard_block=scoreboard_block,
-        warn_block=warn_block,
         hero_block=hero_block,
-        timeline_block=timeline_block,
-        new_today_chip=new_today_chip,
-        new_today_block=new_today_block,
+        brief_block=brief_block,
+        warn_block=warn_block,
         releases_block=releases_block,
         trending_block=trending_block,
-        all_cards=all_cards,
-        lab_chips=lab_chips,
-        news_chips=news_chips,
-        creator_row=creator_row,
-        x_row=x_row,
+        all_block=all_block,
+        timeline_widget=timeline_widget,
+        scoreboard_widget=scoreboard_widget,
+        new_today_tab=new_today_tab,
     )
 
 
