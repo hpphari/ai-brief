@@ -1,50 +1,290 @@
 [
-  {"name":"Vaibhav Sisinty","url":"https://www.youtube.com/@vaibhavsisinty","channel_id":"UClXAalunTPaX1YV185DWUeg","category":"ai"},
-  {"name":"Varun Mayya","url":"https://www.youtube.com/@VarunMayya","channel_id":"UCsQoiOrh7jzKmE8NBofhTnQ","category":"ai"},
-  {"name":"Dan Martell","url":"https://www.youtube.com/@danmartell","channel_id":"UCA-mWX9CvCTVFWRMb9bKc9w","category":"ai"},
-  {"name":"Alberta Tech","url":"https://www.youtube.com/@albertatech","channel_id":"UCkdgAA0rfK7lG5dv4o__Paw","category":"ai"},
-  {"name":"Jonathan Acuña - Doctor AI","url":"https://www.youtube.com/@jonathanacuna","channel_id":"UCOJp1lsu9vCF-TllwMzcCLg","category":"ai"},
-  {"name":"AI adventurer","url":"https://www.youtube.com/@aiadventurer-p1l","channel_id":"UC0VVp_uuSWvrfRPZ6HKiKqw","category":"ai"},
-  {"name":"Underfitted","url":"https://www.youtube.com/@underfitted","channel_id":"UCgLxmJ8xER7Y7sywMN5SfWg","category":"ai"},
-  {"name":"Ishan Sharma","url":"https://www.youtube.com/@IshanSharma7390","channel_id":"UCxjs1n-C7rjXQ9KhgDng-6A","category":"ai"},
-  {"name":"Nikhil Kamath","url":"https://www.youtube.com/@nikhil.kamath","channel_id":"UCRv4waLxgUN0Z-yb2I1Fq4A","category":"ai"},
-  {"name":"Naval","url":"https://www.youtube.com/@NavalR","channel_id":"UCh_dVD10YuSghle8g6yjePg","category":"ai"},
-  {"name":"Sidd Ahmed","url":"https://www.youtube.com/@siddahmed","channel_id":"UCHetsKn3hHUg4J48onIKQZQ","category":"ai"},
-  {"name":"Guy in a Cube","url":"https://www.youtube.com/@GuyInACube","channel_id":"UCFp1vaKzpfvoGai0vE5VJ0w","category":"ai"},
-  {"name":"Programming with Mosh","url":"https://www.youtube.com/@programmingwithmosh","channel_id":"UCWv7vMbMWH4-V0ZXdmDpPBA","category":"ai"},
-  {"name":"PGurus","url":"https://www.youtube.com/@PGurus1","channel_id":"","category":"other"},
-  {"name":"Numberblocks","url":"https://www.youtube.com/@Numberblocks","channel_id":"","category":"other"},
-  {"name":"Alberta Tech","url":"https://www.youtube.com/@albertatech","channel_id":"UCkdgAA0rfK7lG5dv4o__Paw","category":"other"},
-  {"name":"Stay Tuned with Ramya","url":"https://www.youtube.com/@StaytunedwithRamya","channel_id":"","category":"other"},
-  {"name":"Dr Pal","url":"https://www.youtube.com/@DrPal","channel_id":"","category":"other"},
-  {"name":"Vedanta Society of New York","url":"https://www.youtube.com/@VedantaNY","channel_id":"","category":"other"},
-  {"name":"Singai Tamizhan","url":"https://www.youtube.com/@singai_tamizhan","channel_id":"","category":"other"},
-  {"name":"The Flom Family","url":"https://www.youtube.com/@Flomfamily","channel_id":"","category":"other"},
-  {"name":"MY INDIA 24x7","url":"https://www.youtube.com/@MyIndia24x7","channel_id":"","category":"other"},
-  {"name":"motivationaldoc","url":"https://www.youtube.com/@motivationaldoc","channel_id":"","category":"other"},
-  {"name":"learn and earn","url":"https://www.youtube.com/@learnandearntamil4276","channel_id":"","category":"other"},
-  {"name":"Success With Sam","url":"https://www.youtube.com/@SuccessWithSam","channel_id":"","category":"other"},
-  {"name":"PowerfulJRE","url":"https://www.youtube.com/@joerogan","channel_id":"","category":"other"},
-  {"name":"Sweet and healthy","url":"https://www.youtube.com/@SubundGesund","channel_id":"","category":"other"},
-  {"name":"Adete Dahiya","url":"https://www.youtube.com/@AdeteDahiya","channel_id":"","category":"other"},
-  {"name":"Huberman Lab Clips","url":"https://www.youtube.com/@HubermanLabClips","channel_id":"","category":"other"},
-  {"name":"Taichi Zidong","url":"https://www.youtube.com/@taichi_zidong","channel_id":"","category":"other"},
-  {"name":"TED-Ed","url":"https://www.youtube.com/@TEDEd","channel_id":"","category":"other"},
-  {"name":"English Buzz","url":"https://www.youtube.com/@_englishbuzz","channel_id":"","category":"other"},
-  {"name":"The Chopra Well","url":"https://www.youtube.com/@TheChopraWell","channel_id":"","category":"other"},
-  {"name":"Wudang Zidong","url":"https://www.youtube.com/@wudangzidong1","channel_id":"","category":"other"},
-  {"name":"Satvic Yoga","url":"https://www.youtube.com/@satvicyoga","channel_id":"","category":"other"},
-  {"name":"Strength Side","url":"https://www.youtube.com/@Strengthside","channel_id":"","category":"other"},
-  {"name":"Raaj Kamal Films International","url":"https://www.youtube.com/@rkfi","channel_id":"","category":"other"},
-  {"name":"Yoga with Kassandra","url":"https://www.youtube.com/@yogawithkassandra","channel_id":"","category":"other"},
-  {"name":"Move With Nicole","url":"https://www.youtube.com/@MoveWithNicole","channel_id":"","category":"other"},
-  {"name":"YOGABODY","url":"https://www.youtube.com/@YOGABODY.Official","channel_id":"","category":"other"},
-  {"name":"Prashantj yoga","url":"https://www.youtube.com/@PrashantjYoga","channel_id":"","category":"other"},
-  {"name":"Dhruv Rathee","url":"https://www.youtube.com/@dhruvrathee","channel_id":"","category":"other"},
-  {"name":"Nutrition Triathlon","url":"https://www.youtube.com/@NutritionTriathlon","channel_id":"","category":"other"},
-  {"name":"Wint Wealth","url":"https://www.youtube.com/@WintWealthYT","channel_id":"","category":"other"},
-  {"name":"Finance Boosan","url":"https://www.youtube.com/@finance.boosan","channel_id":"","category":"other"},
-  {"name":"Erika Kullberg","url":"https://www.youtube.com/@Erika2","channel_id":"","category":"other"},
-  {"name":"Minority Mindset","url":"https://www.youtube.com/@MinorityMindset","channel_id":"","category":"other"},
-  {"name":"Yoga with Kassandra","url":"https://www.youtube.com/@yogawithkassandra","channel_id":"","category":"other"}
+  {
+    "name": "Vaibhav Sisinty",
+    "url": "https://www.youtube.com/@vaibhavsisinty",
+    "channel_id": "UClXAalunTPaX1YV185DWUeg",
+    "category": "ai"
+  },
+  {
+    "name": "Varun Mayya",
+    "url": "https://www.youtube.com/@VarunMayya",
+    "channel_id": "UCsQoiOrh7jzKmE8NBofhTnQ",
+    "category": "ai"
+  },
+  {
+    "name": "Dan Martell",
+    "url": "https://www.youtube.com/@danmartell",
+    "channel_id": "UCA-mWX9CvCTVFWRMb9bKc9w",
+    "category": "ai"
+  },
+  {
+    "name": "Alberta Tech",
+    "url": "https://www.youtube.com/@albertatech",
+    "channel_id": "UCkdgAA0rfK7lG5dv4o__Paw",
+    "category": "ai"
+  },
+  {
+    "name": "Jonathan Acu\u00f1a - Doctor AI",
+    "url": "https://www.youtube.com/@jonathanacuna",
+    "channel_id": "UCOJp1lsu9vCF-TllwMzcCLg",
+    "category": "ai"
+  },
+  {
+    "name": "AI adventurer",
+    "url": "https://www.youtube.com/@aiadventurer-p1l",
+    "channel_id": "UC0VVp_uuSWvrfRPZ6HKiKqw",
+    "category": "ai"
+  },
+  {
+    "name": "Underfitted",
+    "url": "https://www.youtube.com/@underfitted",
+    "channel_id": "UCgLxmJ8xER7Y7sywMN5SfWg",
+    "category": "ai"
+  },
+  {
+    "name": "Ishan Sharma",
+    "url": "https://www.youtube.com/@IshanSharma7390",
+    "channel_id": "UCxjs1n-C7rjXQ9KhgDng-6A",
+    "category": "ai"
+  },
+  {
+    "name": "Nikhil Kamath",
+    "url": "https://www.youtube.com/@nikhil.kamath",
+    "channel_id": "UCRv4waLxgUN0Z-yb2I1Fq4A",
+    "category": "ai"
+  },
+  {
+    "name": "Naval",
+    "url": "https://www.youtube.com/@NavalR",
+    "channel_id": "UCh_dVD10YuSghle8g6yjePg",
+    "category": "ai"
+  },
+  {
+    "name": "Sidd Ahmed",
+    "url": "https://www.youtube.com/@siddahmed",
+    "channel_id": "UCHetsKn3hHUg4J48onIKQZQ",
+    "category": "ai"
+  },
+  {
+    "name": "Guy in a Cube",
+    "url": "https://www.youtube.com/@GuyInACube",
+    "channel_id": "UCFp1vaKzpfvoGai0vE5VJ0w",
+    "category": "ai"
+  },
+  {
+    "name": "Programming with Mosh",
+    "url": "https://www.youtube.com/@programmingwithmosh",
+    "channel_id": "UCWv7vMbMWH4-V0ZXdmDpPBA",
+    "category": "ai"
+  },
+  {
+    "name": "PGurus",
+    "url": "https://www.youtube.com/@PGurus1",
+    "channel_id": "UC5oAOrsfqTxLOmFNuK_S8ug",
+    "category": "other"
+  },
+  {
+    "name": "Numberblocks",
+    "url": "https://www.youtube.com/@Numberblocks",
+    "channel_id": "UCPlwvN0w4qFSP1FllALB92w",
+    "category": "other"
+  },
+  {
+    "name": "Alberta Tech",
+    "url": "https://www.youtube.com/@albertatech",
+    "channel_id": "UCkdgAA0rfK7lG5dv4o__Paw",
+    "category": "other"
+  },
+  {
+    "name": "Stay Tuned with Ramya",
+    "url": "https://www.youtube.com/@StaytunedwithRamya",
+    "channel_id": "UCBAiv_SaeHK9LM2CmAvZtng",
+    "category": "other"
+  },
+  {
+    "name": "Dr Pal",
+    "url": "https://www.youtube.com/@DrPal",
+    "channel_id": "UCP4k407eomZThGHo_9sgMkg",
+    "category": "other"
+  },
+  {
+    "name": "Vedanta Society of New York",
+    "url": "https://www.youtube.com/@VedantaNY",
+    "channel_id": "UCZOKv_xnTzyLD9RJmbBUV9Q",
+    "category": "other"
+  },
+  {
+    "name": "Singai Tamizhan",
+    "url": "https://www.youtube.com/@singai_tamizhan",
+    "channel_id": "UCIfig8dBwtRMvlnhhV-38YA",
+    "category": "other"
+  },
+  {
+    "name": "The Flom Family",
+    "url": "https://www.youtube.com/@Flomfamily",
+    "channel_id": "UCKuSDqgt_rrBwvtc7CxSTeQ",
+    "category": "other"
+  },
+  {
+    "name": "MY INDIA 24x7",
+    "url": "https://www.youtube.com/@MyIndia24x7",
+    "channel_id": "UC9kl3wbc9aPJZ8Iglzi8Ilg",
+    "category": "other"
+  },
+  {
+    "name": "motivationaldoc",
+    "url": "https://www.youtube.com/@motivationaldoc",
+    "channel_id": "UCKcWSiffY8MpZ3NKav8LeRA",
+    "category": "other"
+  },
+  {
+    "name": "learn and earn",
+    "url": "https://www.youtube.com/@learnandearntamil4276",
+    "channel_id": "UCEu1F55PQ66_5EGZceoPp6w",
+    "category": "other"
+  },
+  {
+    "name": "Success With Sam",
+    "url": "https://www.youtube.com/@SuccessWithSam",
+    "channel_id": "UCLI_f0zfE2Q9EWoJe_cAwRw",
+    "category": "other"
+  },
+  {
+    "name": "PowerfulJRE",
+    "url": "https://www.youtube.com/@joerogan",
+    "channel_id": "UCzQUP1qoWDoEbmsQxvdjxgQ",
+    "category": "other"
+  },
+  {
+    "name": "Sweet and healthy",
+    "url": "https://www.youtube.com/@SubundGesund",
+    "channel_id": "UCnOhtC4hIKH5YyzZRZG5plA",
+    "category": "other"
+  },
+  {
+    "name": "Adete Dahiya",
+    "url": "https://www.youtube.com/@AdeteDahiya",
+    "channel_id": "UCxe5Nq5v4jFYhwkDQDIFo2w",
+    "category": "other"
+  },
+  {
+    "name": "Huberman Lab Clips",
+    "url": "https://www.youtube.com/@HubermanLabClips",
+    "channel_id": "UCkZjTZNvuxq1CYMS3cwZa1Q",
+    "category": "other"
+  },
+  {
+    "name": "Taichi Zidong",
+    "url": "https://www.youtube.com/@taichi_zidong",
+    "channel_id": "UCan3pma_fRcB28ml2mTZPkg",
+    "category": "other"
+  },
+  {
+    "name": "TED-Ed",
+    "url": "https://www.youtube.com/@TEDEd",
+    "channel_id": "UCsooa4yRKGN_zEE8iknghZA",
+    "category": "other"
+  },
+  {
+    "name": "English Buzz",
+    "url": "https://www.youtube.com/@_englishbuzz",
+    "channel_id": "UCnz7wsdgb7Y4GFLQfHzaCRg",
+    "category": "other"
+  },
+  {
+    "name": "The Chopra Well",
+    "url": "https://www.youtube.com/@TheChopraWell",
+    "channel_id": "UC6d0RMVcoXNCkTpG8PW2dBA",
+    "category": "other"
+  },
+  {
+    "name": "Wudang Zidong",
+    "url": "https://www.youtube.com/@wudangzidong1",
+    "channel_id": "UC39lIgFVkTy17IlwxMhd6ww",
+    "category": "other"
+  },
+  {
+    "name": "Satvic Yoga",
+    "url": "https://www.youtube.com/@satvicyoga",
+    "channel_id": "UCeP4oj6TsUlnlzQqUzKxUjg",
+    "category": "other"
+  },
+  {
+    "name": "Strength Side",
+    "url": "https://www.youtube.com/@Strengthside",
+    "channel_id": "UC9BNGVGr_lvbn3d23ckuVOA",
+    "category": "other"
+  },
+  {
+    "name": "Raaj Kamal Films International",
+    "url": "https://www.youtube.com/@rkfi",
+    "channel_id": "UC_gXhnzeF5_XIFn4gx_bocg",
+    "category": "other"
+  },
+  {
+    "name": "Yoga with Kassandra",
+    "url": "https://www.youtube.com/@yogawithkassandra",
+    "channel_id": "UCX32D3gKXENrhOXdZjWWtMA",
+    "category": "other"
+  },
+  {
+    "name": "Move With Nicole",
+    "url": "https://www.youtube.com/@MoveWithNicole",
+    "channel_id": "UCEbbyBuyQiHpKiOMj9GFhVw",
+    "category": "other"
+  },
+  {
+    "name": "YOGABODY",
+    "url": "https://www.youtube.com/@YOGABODY.Official",
+    "channel_id": "UCR5v8bVAjoAc61deR_HVc8A",
+    "category": "other"
+  },
+  {
+    "name": "Prashantj yoga",
+    "url": "https://www.youtube.com/@PrashantjYoga",
+    "channel_id": "UCp8TSIgLoBWsPS1knyeFhaw",
+    "category": "other"
+  },
+  {
+    "name": "Dhruv Rathee",
+    "url": "https://www.youtube.com/@dhruvrathee",
+    "channel_id": "UC-CSyyi47VX1lD9zyeABW3w",
+    "category": "other"
+  },
+  {
+    "name": "Nutrition Triathlon",
+    "url": "https://www.youtube.com/@NutritionTriathlon",
+    "channel_id": "UCex01xXyKqklIkdN3Oufh3g",
+    "category": "other"
+  },
+  {
+    "name": "Wint Wealth",
+    "url": "https://www.youtube.com/@WintWealthYT",
+    "channel_id": "UCggPd3Vf9ooG2r4I_ZNWBzA",
+    "category": "other"
+  },
+  {
+    "name": "Finance Boosan",
+    "url": "https://www.youtube.com/@finance.boosan",
+    "channel_id": "UCmfl6VteCu880D8Txl4vEag",
+    "category": "other"
+  },
+  {
+    "name": "Erika Kullberg",
+    "url": "https://www.youtube.com/@Erika2",
+    "channel_id": "UCoSw1rKMkCbwzKpkC0OjRKA",
+    "category": "other"
+  },
+  {
+    "name": "Minority Mindset",
+    "url": "https://www.youtube.com/@MinorityMindset",
+    "channel_id": "UCT3EznhW_CNFcfOlyDNTLLw",
+    "category": "other"
+  },
+  {
+    "name": "Yoga with Kassandra",
+    "url": "https://www.youtube.com/@yogawithkassandra",
+    "channel_id": "UCX32D3gKXENrhOXdZjWWtMA",
+    "category": "other"
+  }
 ]

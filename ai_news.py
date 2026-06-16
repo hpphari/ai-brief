@@ -13,6 +13,16 @@ from collections import defaultdict
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 
+# Load .env if present
+_env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+if os.path.exists(_env_path):
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _v = _line.split("=", 1)
+                os.environ.setdefault(_k.strip(), _v.strip())
+
 _RSSHUB = os.environ.get("RSSHUB_URL", "https://rsshub.app")
 
 # ── Feeds ─────────────────────────────────────────────────────────────────────
@@ -940,6 +950,43 @@ def main():
         fetched = fetch_feed(name, cfg)
         print(len(fetched))
         all_items.extend(fetched)
+
+    # X bookmarks (requires X_AUTH_TOKEN + X_CT0 in .env)
+    if os.environ.get("X_AUTH_TOKEN") and os.environ.get("X_CT0"):
+        try:
+            from x_fetcher import fetch_bookmarks
+            print("  X: My Bookmarks...", end=" ", flush=True)
+            bm = fetch_bookmarks(40)
+            print(len(bm))
+            all_items.extend(bm)
+        except Exception as e:
+            print(f"0 (error: {e})")
+
+    # YouTube subscriptions via API (requires YOUTUBE_API_KEY in .env)
+    if os.environ.get("YOUTUBE_API_KEY"):
+        try:
+            from youtube_fetcher import fetch_subscriptions, fill_missing_channel_ids
+            filled = fill_missing_channel_ids()
+            if filled:
+                print(f"  YouTube: filled {filled} missing channel IDs")
+            print("  YouTube: My Subscriptions (AI)...", end=" ", flush=True)
+            yt = fetch_subscriptions(categories=["ai"], max_per_channel=3, window_hours=336)
+            print(len(yt))
+            all_items.extend(yt)
+        except Exception as e:
+            print(f"0 (error: {e})")
+
+    # Instagram (requires IG_SESSION_ID in .env)
+    if os.environ.get("IG_SESSION_ID"):
+        try:
+            from instagram_fetcher import fetch_instagram
+            print("  Instagram: AI accounts...", end=" ", flush=True)
+            ig = fetch_instagram(max_per_account=3, window_hours=168, ai_only=True)
+            print(len(ig))
+            all_items.extend(ig)
+        except Exception as e:
+            print(f"0 (error: {e})")
+
     print(f"\n{len(all_items)} total items")
 
     # Detection pipeline
