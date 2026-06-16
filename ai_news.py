@@ -987,6 +987,17 @@ def main():
         except Exception as e:
             print(f"0 (error: {e})")
 
+    # LinkedIn (requires LI_AT in .env + curl_cffi installed)
+    if os.environ.get("LI_AT"):
+        try:
+            from linkedin_fetcher import fetch_linkedin
+            print("  LinkedIn: AI company pages...", end=" ", flush=True)
+            li = fetch_linkedin(max_total=30, ai_only=True)
+            print(len(li))
+            all_items.extend(li)
+        except Exception as e:
+            print(f"0 (error: {e})")
+
     print(f"\n{len(all_items)} total items")
 
     # Detection pipeline
