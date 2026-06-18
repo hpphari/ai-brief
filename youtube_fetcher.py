@@ -170,6 +170,7 @@ def fetch_subscriptions(categories: list[str] | None = None,
                     published_at= pub,
                     channel_name= name,
                     color       = color,
+                    category    = "youtube",
                 ))
         except Exception:
             continue
@@ -276,7 +277,7 @@ def fetch_my_subscriptions_live(max_per_channel: int = 3,
                     continue
                 items.append(_make_item(vid, snippet.get("title", ""),
                                         snippet.get("description", ""),
-                                        pub, name, color))
+                                        pub, name, color, category="youtube"))
         except Exception:
             continue
     return items

@@ -776,6 +776,8 @@ header{{border-bottom:1px solid var(--border);padding:20px 0 16px}}
   {brief_block}
   {releases_block}
   {news_block}
+  {youtube_block}
+  {linkedin_block}
   {creators_block}
   {x_block}
 </div>
@@ -817,6 +819,23 @@ def make_card(item):
         f'<div class="story-source">{esc(item["source"])}</div>'
         f'<div class="story-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>'
         f'{summary_html}{impact_html}'
+        f'</div>'
+    )
+
+def make_bookmark_card(item):
+    """X bookmark card — shows the tweet text as context below the headline."""
+    title_text = item.get("plain_headline", "").strip() or item["title"]
+    tweet_text = item.get("summary_raw", "").strip()
+    context_html = ""
+    if tweet_text and tweet_text != title_text:
+        # Show the first 200 chars of the tweet as context
+        snippet = tweet_text[:220] + ("…" if len(tweet_text) > 220 else "")
+        context_html = f'<div class="story-summary">{esc(snippet)}</div>'
+    return (
+        f'<div class="story">'
+        f'<div class="story-source">{esc(item["source"])}</div>'
+        f'<div class="story-headline"><a href="{item["link"]}" target="_blank" rel="noopener">{esc(title_text)}</a></div>'
+        f'{context_html}'
         f'</div>'
     )
 
@@ -900,19 +919,35 @@ def build_html(items, top3, ollama_ok, date_str, archive_dir):
         rows = "".join(make_card(i) for i in news_items)
         news_block = _section("📰 Top Stories", rows)
 
-    # 📺 Creator Picks — YouTube creators, up to 6
+    # 📺 YouTube Subscriptions — videos from the user's subscribed AI channels
+    yt_items = [i for i in by_score if i.get("category") == "youtube"][:10]
+    youtube_block = ""
+    if yt_items:
+        rows = "".join(make_card(i) for i in yt_items)
+        youtube_block = _section("📺 YouTube Subscriptions", rows)
+
+    # 💼 LinkedIn — posts from AI company pages
+    li_items = [i for i in by_score if i.get("category") == "linkedin"][:10]
+    linkedin_block = ""
+    if li_items:
+        rows = "".join(make_card(i) for i in li_items)
+        linkedin_block = _section("💼 LinkedIn", rows)
+
+    # 📺 Creator Picks — YouTube RSS creators, up to 6
     creator_items = [i for i in by_score if i.get("category") == "creator"][:6]
     creators_block = ""
     if creator_items:
         rows = "".join(make_card(i) for i in creator_items)
-        creators_block = _section("📺 Creator Picks", rows)
+        creators_block = _section("🎬 Creator Picks", rows)
 
-    # 🐦 From X — X/Twitter, up to 6
-    x_items = [i for i in by_score if i.get("category") == "x"][:6]
-    x_block = ""
-    if x_items:
-        rows = "".join(make_card(i) for i in x_items)
-        x_block = _section("🐦 From X", rows)
+    # 🐦 From X — bookmarks first, then other X items, up to 10
+    bm_items  = [i for i in by_score if i.get("category") == "x" and "Bookmarks" in i.get("source", "")][:6]
+    x_feed    = [i for i in by_score if i.get("category") == "x" and "Bookmarks" not in i.get("source", "")][:4]
+    x_block   = ""
+    x_combined = bm_items + x_feed
+    if x_combined:
+        rows = "".join(make_bookmark_card(i) if "Bookmarks" in i.get("source","") else make_card(i) for i in x_combined)
+        x_block = _section("🐦 From X  (Bookmarks + Feed)", rows)
 
     releases_count = sum(1 for i in items if i.get("is_release"))
     trending_count = sum(1 for i in items if i.get("trending"))
@@ -925,6 +960,8 @@ def build_html(items, top3, ollama_ok, date_str, archive_dir):
         brief_block=brief_block,
         releases_block=releases_block,
         news_block=news_block,
+        youtube_block=youtube_block,
+        linkedin_block=linkedin_block,
         creators_block=creators_block,
         x_block=x_block,
     )
